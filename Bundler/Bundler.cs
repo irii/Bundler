@@ -16,7 +16,7 @@ namespace Bundler {
             return BundleStore.GetBundleByPath(uri.AbsolutePath, out bundle);
         }
 
-        public static Bundle RegisterContentBundler(string bundleKey, string virtualPath, IContentBundler contentBundler) {
+        public static Bundle AddBundle(string bundleKey, string virtualPath, IContentBundler contentBundler) {
             if (bundleKey == null) throw new ArgumentNullException(nameof(bundleKey));
             if (virtualPath == null) throw new ArgumentNullException(nameof(virtualPath));
             if (contentBundler == null) throw new ArgumentNullException(nameof(contentBundler));

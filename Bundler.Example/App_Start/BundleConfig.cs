@@ -11,8 +11,8 @@ namespace Bundler.Example {
         public static Bundle StyleBundle;
 
         public static void RegisterBundles() {
-            ScriptBundle = Bundler.RegisterContentBundler(ApplicationScriptsBundleKey, "~/Scripts", JavaScriptContentBundler.Instance);
-            StyleBundle = Bundler.RegisterContentBundler(ApplicationStylesBundleKey, "~/Styles", CssContentBundler.Instance);
+            ScriptBundle = Bundler.AddBundle(ApplicationScriptsBundleKey, "~/Scripts", JavaScriptContentBundler.Instance);
+            StyleBundle = Bundler.AddBundle(ApplicationStylesBundleKey, "~/Styles", CssContentBundler.Instance);
 
             // Scripts
             ScriptBundle.AddFile("~/Scripts/jquery-1.10.2.js");
