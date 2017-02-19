@@ -65,6 +65,7 @@
     <Compile Include="Bundler.cs" />
     <Compile Include="BundlerHandler.cs" />
     <Compile Include="BundlerModule.cs" />
+    <Compile Include="Helper\BundleDirectoryHelper.cs" />
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Helper\BundleMvcRenderHelper.cs" />
     <Compile Include="Bundle.cs" />

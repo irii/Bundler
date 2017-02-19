@@ -5,7 +5,7 @@ using System.Threading;
 namespace Bundler.Internals {
     public sealed class Container {
         private readonly string _placeholder;
-        private readonly HashSet<string> _virutalFiles = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+        private readonly HashSet<string> _identifiers = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
         private readonly ReaderWriterLockSlim _readerWriterLock = new ReaderWriterLockSlim();
         private readonly ReaderWriterLockSlim _versionReaderWriterLock = new ReaderWriterLockSlim();
 
@@ -16,24 +16,24 @@ namespace Bundler.Internals {
             _placeholder = placeholder;
         }
 
-        public bool Exists(string virtualFile) {
+        public bool Exists(string identifier) {
             _readerWriterLock.EnterReadLock();
             try {
-                return _virutalFiles.Contains(virtualFile);
+                return _identifiers.Contains(identifier);
             } finally {
                 _readerWriterLock.ExitReadLock();
             }
         }
 
-        public void Append(string virtualFile, string transformedContent) {
+        public void Append(string identifier, string transformedContent) {
             _readerWriterLock.EnterWriteLock();
             _versionReaderWriterLock.EnterWriteLock();
 
-            if (_virutalFiles.Contains(virtualFile)) {
+            if (_identifiers.Contains(identifier)) {
                 return;
             }
 
-            _virutalFiles.Add(virtualFile);
+            _identifiers.Add(identifier);
             _current = string.IsNullOrWhiteSpace(_current) 
                 ? string.Concat(_current, transformedContent) 
                 : string.Concat(_current, _placeholder, transformedContent);

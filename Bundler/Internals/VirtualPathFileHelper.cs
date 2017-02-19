@@ -11,7 +11,7 @@ namespace Bundler.Internals {
             return File.Exists(HttpContext.Current.Server.MapPath(virtualFile));
         }
 
-        public static string GetFilePath(string virtualFile) {
+        public static string GetFullPath(string virtualFile) {
             return HttpContext.Current.Server.MapPath(virtualFile);
         }
     }

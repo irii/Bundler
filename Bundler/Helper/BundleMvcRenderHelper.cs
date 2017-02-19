@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Web.Mvc;
-using Bundler.Infrastructure;
 
 namespace Bundler.Helper {
     public static class BundleMvcRenderHelper {

@@ -3,7 +3,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Bundler.Css;
 using Bundler.Helper;
-using Bundler.Infrastructure;
 using Bundler.JavaScript;
 
 namespace Bundler.Example {
@@ -44,7 +43,7 @@ namespace Bundler.Example {
             Bundle bundle;
             if (!Bundler.TryGetBundle(key, out bundle)) {
                 var path = $"~/Scripts/{requestContext.RouteData.Values["controller"]}/{requestContext.RouteData.Values["action"]}";
-                Bundler.RegisterContentBundler(key, path, JavaScriptContentBundler.Instance);
+                bundle = Bundler.RegisterContentBundler(key, path, JavaScriptContentBundler.Instance);
             }
 
             bundle.AddFile(scriptFile);
@@ -57,7 +56,7 @@ namespace Bundler.Example {
             Bundle bundle;
             if (!Bundler.TryGetBundle(key, out bundle)) {
                 var path = $"~/Styles/{requestContext.RouteData.Values["controller"]}/{requestContext.RouteData.Values["action"]}";
-                Bundler.RegisterContentBundler(key, path, CssContentBundler.Instance);
+                bundle = Bundler.RegisterContentBundler(key, path, CssContentBundler.Instance);
             }
 
             bundle.AddFile(cssFile);
