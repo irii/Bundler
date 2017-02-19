@@ -4,53 +4,56 @@ using System.Threading;
 using Bundler.Infrastructure;
 
 namespace Bundler.Internals {
-    public static class BundleInfoStore {
+    public static class BundleStore {
         private static readonly ReaderWriterLockSlim PathLock = new ReaderWriterLockSlim();
         private static readonly ReaderWriterLockSlim KeyLock = new ReaderWriterLockSlim();
 
-        private static readonly Dictionary<string, BundleInfo> PathDictionary = new Dictionary<string, BundleInfo>(StringComparer.InvariantCultureIgnoreCase);
-        private static readonly Dictionary<string, BundleInfo> KeyDictionary = new Dictionary<string, BundleInfo>();
+        private static readonly Dictionary<string, Bundle> PathDictionary = new Dictionary<string, Bundle>(StringComparer.InvariantCultureIgnoreCase);
+        private static readonly Dictionary<string, Bundle> KeyDictionary = new Dictionary<string, Bundle>();
 
-        public static void RegisterKey(string bundleKey, string virtualPath, IContentBundler contentBundler) {
+        public static Bundle RegisterKey(string bundleKey, string virtualPath, IContentBundler contentBundler) {
+            Bundle bundle;
             KeyLock.EnterReadLock();
             try {
-                if (KeyDictionary.ContainsKey(bundleKey)) {
-                    return;
+                if (KeyDictionary.TryGetValue(bundleKey, out bundle)) {
+                    return bundle;
                 }
             }
             finally {
                 KeyLock.ExitReadLock();
             }
 
-            var bundleInfo = new BundleInfo(bundleKey, virtualPath, contentBundler);
+            bundle = new Bundle(bundleKey, virtualPath, contentBundler);
 
             KeyLock.EnterWriteLock();
             PathLock.EnterWriteLock();
 
             try {
-                KeyDictionary[bundleKey] = bundleInfo;
-                PathDictionary[virtualPath] = bundleInfo;
+                KeyDictionary[bundleKey] = bundle;
+                PathDictionary[virtualPath] = bundle;
             }
             finally {
                 PathLock.ExitWriteLock();
                 KeyLock.ExitWriteLock();
             }
+
+            return bundle;
         }
 
-        public static bool GetBundleInfoByPath(string virtualPath, out BundleInfo bundleInfo) {
+        public static bool GetBundleByPath(string virtualPath, out Bundle bundle) {
             PathLock.EnterReadLock();
             try {
-                return PathDictionary.TryGetValue(virtualPath, out bundleInfo);
+                return PathDictionary.TryGetValue(virtualPath, out bundle);
             }
             finally {
                 PathLock.ExitReadLock();
             }
         }
 
-        public static bool GetBundleInfoByKey(string bundleKey, out BundleInfo bundleInfo) {
+        public static bool GetBundleByKey(string bundleKey, out Bundle bundle) {
             KeyLock.EnterReadLock();
             try {
-                return KeyDictionary.TryGetValue(bundleKey, out bundleInfo);
+                return KeyDictionary.TryGetValue(bundleKey, out bundle);
             } finally {
                 KeyLock.ExitReadLock();
             }

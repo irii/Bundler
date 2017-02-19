@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Web;
 using System.Web.Mvc;
 using Bundler.Infrastructure;
@@ -7,61 +6,43 @@ using Bundler.Internals;
 
 namespace Bundler {
     public static class Bundler {
-        public static string Content(string bundleKey) {
-            BundleInfo bundleInfo;
-            if (!BundleInfoStore.GetBundleInfoByKey(bundleKey, out bundleInfo)) {
-                return string.Empty;
+        /// <summary>
+        /// Check's if the request url matches to a bundle.
+        /// </summary>
+        /// <param name="uri"></param>
+        /// <param name="bundle"></param>
+        /// <returns></returns>
+        public static bool IsBundleRequest(Uri uri, out Bundle bundle) {
+            return BundleStore.GetBundleByPath(uri.AbsolutePath, out bundle);
+        }
+
+        public static Bundle RegisterContentBundler(string bundleKey, string virtualPath, IContentBundler contentBundler) {
+            if (bundleKey == null) throw new ArgumentNullException(nameof(bundleKey));
+            if (virtualPath == null) throw new ArgumentNullException(nameof(virtualPath));
+            if (contentBundler == null) throw new ArgumentNullException(nameof(contentBundler));
+
+            if (!virtualPath.StartsWith("~/")) {
+                throw new ArgumentException("Path should be virtual!");
             }
 
-            return bundleInfo.Container.Get();
-        }
-
-        public static bool IsBundleRequest(Uri uri, out BundleInfo bundleInfo) {
-            return BundleInfoStore.GetBundleInfoByPath(uri.AbsolutePath, out bundleInfo);
-        }
-
-        public static void RegisterContentBundler(string bundleKey, IContentBundler contentBundler) {
-            var path = $"/{Guid.NewGuid():N}";
-            RegisterContentBundler(bundleKey, path, contentBundler);
-        }
-
-        public static void RegisterContentBundler(string bundleKey, string path, IContentBundler contentBundler) {
-            BundleInfoStore.RegisterKey(bundleKey, path, contentBundler);
-        }
-
-        public static bool IsBundleKeyRegistered(string bundleKey) {
-            return BundleInfoStore.IsBundleKeyRegistered(bundleKey);
-        }
-
-        public static void RegisterFile(string bundleKey, string virtualFile) {
-            BundleInfo bundleInfo;
-            if (!BundleInfoStore.GetBundleInfoByKey(bundleKey, out bundleInfo) || bundleInfo.Container.Exists(virtualFile)) {
-                return;
+            if (virtualPath.Contains("?")) {
+                throw new ArgumentException("Query arguments are not allowed!");
             }
 
-            if (!VirtualPathFileHelper.Exists(virtualFile)) {
-                return;
-            }
-
-            var fileContent = File.ReadAllText(VirtualPathFileHelper.GetFilePath(virtualFile));
-
-            using (var transformer = bundleInfo.ContentBundler.CreateTransformer()) {
-                string processedContent;
-                if (!transformer.Process(fileContent, out processedContent)) {
-                    return;
-                }
-
-                bundleInfo.Container.Append(virtualFile, processedContent, bundleInfo.ContentBundler.Placeholder);
-            }
+            return BundleStore.RegisterKey(bundleKey, virtualPath.Substring(1), contentBundler);
         }
 
-        public static IHtmlString RenderTag(string bundleKey) {
-            BundleInfo bundleInfo;
-            if (!BundleInfoStore.GetBundleInfoByKey(bundleKey, out bundleInfo)) {
+        public static bool TryGetBundle(string bundleKey, out Bundle bundle) {
+            return BundleStore.GetBundleByKey(bundleKey, out bundle);
+        }
+
+        public static IHtmlString Render(string bundleKey) {
+            Bundle bundle;
+            if (!BundleStore.GetBundleByKey(bundleKey, out bundle)) {
                 return MvcHtmlString.Empty;
             }
 
-            return new MvcHtmlString(Environment.NewLine + bundleInfo.ContentBundler.GenerateTag(bundleInfo.VirtualPath + "?v=" + bundleInfo.Container.GetVersion()));
+            return new MvcHtmlString(Environment.NewLine + bundle.Render());
         }
     }
 }

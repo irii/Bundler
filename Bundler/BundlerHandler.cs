@@ -1,19 +1,18 @@
 ﻿using System.Web;
-using Bundler.Infrastructure;
 
 namespace Bundler {
     public sealed class BundlerHandler : IHttpHandler {
-        private readonly BundleInfo _bundleInfo;
+        private readonly Bundle _bundle;
         public bool IsReusable { get; } = false;
 
-        public BundlerHandler(BundleInfo bundleInfo) {
-            _bundleInfo = bundleInfo;
+        public BundlerHandler(Bundle bundle) {
+            _bundle = bundle;
         }
 
 
         public void ProcessRequest(HttpContext context) {
-            context.Response.Write(Bundler.Content(_bundleInfo.BundleKey) ?? string.Empty);
-            context.Response.ContentType = _bundleInfo.ContentBundler.ContentType;
+            context.Response.Write(_bundle.Get() ?? string.Empty);
+            context.Response.ContentType = _bundle.ContentType;
         }
 
     }

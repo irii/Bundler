@@ -2,6 +2,8 @@
 using System.Web.Mvc;
 using System.Web.Routing;
 using Bundler.Css;
+using Bundler.Helper;
+using Bundler.Infrastructure;
 using Bundler.JavaScript;
 
 namespace Bundler.Example {
@@ -25,32 +27,40 @@ namespace Bundler.Example {
             var key = ResolveDynamicKey(requestContext.RouteData, "Scripts");
             return key == null 
                 ? MvcHtmlString.Empty 
-                : Bundler.RenderTag(key);
+                : Bundler.Render(key);
         }
 
         public static IHtmlString RenderDynamicStyles(RequestContext requestContext) {
             var key = ResolveDynamicKey(requestContext.RouteData, "Styles");
             return key == null
                 ? MvcHtmlString.Empty
-                : Bundler.RenderTag(key);
+                : Bundler.Render(key);
         }
         
         public static void AddScriptFile(RequestContext requestContext, string scriptFile) {
             var key = ResolveDynamicKey(requestContext.RouteData, "Scripts");
             if(key == null) { return; }
-            if (!Bundler.IsBundleKeyRegistered(key)) {
-                Bundler.RegisterContentBundler(key, JavaScriptContentBundler.Instance);
+
+            Bundle bundle;
+            if (!Bundler.TryGetBundle(key, out bundle)) {
+                var path = $"~/Scripts/{requestContext.RouteData.Values["controller"]}/{requestContext.RouteData.Values["action"]}";
+                Bundler.RegisterContentBundler(key, path, JavaScriptContentBundler.Instance);
             }
-            Bundler.RegisterFile(key, scriptFile);
+
+            bundle.AddFile(scriptFile);
         }
 
         public static void AddCssFile(RequestContext requestContext, string cssFile) {
             var key = ResolveDynamicKey(requestContext.RouteData, "Styles");
             if (key == null) { return; }
-            if (!Bundler.IsBundleKeyRegistered(key)) {
-                Bundler.RegisterContentBundler(key, CssContentBundler.Instance);
+
+            Bundle bundle;
+            if (!Bundler.TryGetBundle(key, out bundle)) {
+                var path = $"~/Styles/{requestContext.RouteData.Values["controller"]}/{requestContext.RouteData.Values["action"]}";
+                Bundler.RegisterContentBundler(key, path, CssContentBundler.Instance);
             }
-            Bundler.RegisterFile(key, cssFile);
+
+            bundle.AddFile(cssFile);
         }
     }
 }

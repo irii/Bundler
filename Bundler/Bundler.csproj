@@ -65,19 +65,19 @@
     <Compile Include="Bundler.cs" />
     <Compile Include="BundlerHandler.cs" />
     <Compile Include="BundlerModule.cs" />
-    <Compile Include="Infrastructure\BundleInfo.cs" />
-    <Compile Include="Infrastructure\Container.cs" />
+    <Compile Include="Helper\BundleFileHelper.cs" />
+    <Compile Include="Helper\BundleMvcRenderHelper.cs" />
+    <Compile Include="Bundle.cs" />
+    <Compile Include="Internals\Container.cs" />
     <Compile Include="Infrastructure\IContentBundler.cs" />
     <Compile Include="Infrastructure\IContentTransformer.cs" />
-    <Compile Include="Internals\BundleInfoStore.cs" />
+    <Compile Include="Internals\BundleStore.cs" />
     <Compile Include="Internals\VirtualPathFileHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Helper\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
