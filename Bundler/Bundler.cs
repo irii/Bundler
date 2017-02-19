@@ -17,7 +17,7 @@ namespace Bundler {
         }
 
         public static bool IsBundleRequest(Uri uri, out BundleInfo bundleInfo) {
-            return BundleInfoStore.GetBundleInfoByPath(uri.PathAndQuery, out bundleInfo);
+            return BundleInfoStore.GetBundleInfoByPath(uri.AbsolutePath, out bundleInfo);
         }
 
         public static void RegisterContentBundler(string bundleKey, IContentBundler contentBundler) {
@@ -61,7 +61,7 @@ namespace Bundler {
                 return MvcHtmlString.Empty;
             }
 
-            return new MvcHtmlString(Environment.NewLine + bundleInfo.ContentBundler.GenerateTag(bundleInfo.VirtualPath));
+            return new MvcHtmlString(Environment.NewLine + bundleInfo.ContentBundler.GenerateTag(bundleInfo.VirtualPath + "?v=" + bundleInfo.Container.GetVersion()));
         }
     }
 }
