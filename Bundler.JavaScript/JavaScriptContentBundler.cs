@@ -13,7 +13,7 @@ namespace Bundler.JavaScript {
             return $"<script src=\"{src}\"></script>";
         }
 
-        string IContentBundler.Placeholder { get; } = Environment.NewLine;
+        string IContentBundler.Placeholder { get; } = ";" + Environment.NewLine;
 
         IContentTransformer IContentBundler.CreateTransformer() => new JavaScriptContentTransformer();
     }

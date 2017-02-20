@@ -19,7 +19,7 @@ namespace Bundler.Example {
                 return null;
             }
 
-            return $"C:{controller}::A:{action}::I:{additionalIdentifier}";
+            return $"C:{controller.ToLower()}::A:{action.ToLower()}::I:{additionalIdentifier}";
         }
 
         public static IHtmlString RenderDynamicScripts(RequestContext requestContext) {
