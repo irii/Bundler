@@ -14,18 +14,19 @@ namespace Bundler.Internals {
                 Paths = paths;
             }
         }
-
-
+        
         private static readonly IEqualityComparer<string> KeyComparer = StringComparer.InvariantCultureIgnoreCase;
         private static readonly object WriteLock = new object();
 
-        // Item1: KeyDictionary
-        // Item2: PathDictionary
         private static MappingTuple _mappings = new MappingTuple(new Dictionary<string, Bundle>(), new Dictionary<string, Bundle>(KeyComparer));
 
         public static Bundle RegisterKey(string bundleKey, string virtualPath, IContentBundler contentBundler) {
+            Bundle bundle;
+            if (_mappings.Keys.TryGetValue(bundleKey, out bundle)) {
+                return bundle;
+            }
+
             lock (WriteLock) {
-                Bundle bundle;
 
                 if (_mappings.Keys.TryGetValue(bundleKey, out bundle)) {
                     return bundle;
@@ -44,7 +45,6 @@ namespace Bundler.Internals {
 
                 return bundle;
             }
-
         }
 
         public static bool GetBundleByPath(string virtualPath, out Bundle bundle) {

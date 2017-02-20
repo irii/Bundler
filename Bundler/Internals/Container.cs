@@ -17,6 +17,10 @@ namespace Bundler.Internals {
         }
 
         public void Append(string identifier, string transformedContent) {
+            if (_current.Item3.Contains(identifier)) {
+                return;
+            }
+
             lock (_writeLock) {
                 if (_current.Item3.Contains(identifier)) {
                     return;
