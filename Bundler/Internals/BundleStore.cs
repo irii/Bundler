@@ -5,67 +5,58 @@ using Bundler.Infrastructure;
 
 namespace Bundler.Internals {
     public static class BundleStore {
-        private static readonly ReaderWriterLockSlim PathLock = new ReaderWriterLockSlim();
-        private static readonly ReaderWriterLockSlim KeyLock = new ReaderWriterLockSlim();
+        private class MappingTuple {
+            public readonly Dictionary<string, Bundle> Keys;
+            public readonly Dictionary<string, Bundle> Paths;
 
-        private static readonly Dictionary<string, Bundle> PathDictionary = new Dictionary<string, Bundle>(StringComparer.InvariantCultureIgnoreCase);
-        private static readonly Dictionary<string, Bundle> KeyDictionary = new Dictionary<string, Bundle>();
+            public MappingTuple(Dictionary<string, Bundle> keys, Dictionary<string, Bundle> paths) {
+                Keys = keys;
+                Paths = paths;
+            }
+        }
+
+
+        private static readonly IEqualityComparer<string> KeyComparer = StringComparer.InvariantCultureIgnoreCase;
+        private static readonly object WriteLock = new object();
+
+        // Item1: KeyDictionary
+        // Item2: PathDictionary
+        private static MappingTuple _mappings = new MappingTuple(new Dictionary<string, Bundle>(), new Dictionary<string, Bundle>(KeyComparer));
 
         public static Bundle RegisterKey(string bundleKey, string virtualPath, IContentBundler contentBundler) {
-            Bundle bundle;
-            KeyLock.EnterReadLock();
-            try {
-                if (KeyDictionary.TryGetValue(bundleKey, out bundle)) {
+            lock (WriteLock) {
+                Bundle bundle;
+
+                if (_mappings.Keys.TryGetValue(bundleKey, out bundle)) {
                     return bundle;
                 }
-            }
-            finally {
-                KeyLock.ExitReadLock();
-            }
 
-            bundle = new Bundle(bundleKey, virtualPath, contentBundler);
+                bundle = new Bundle(bundleKey, virtualPath, contentBundler);
 
-            KeyLock.EnterWriteLock();
-            PathLock.EnterWriteLock();
+                var newKeyDictionary = new Dictionary<string, Bundle>(_mappings.Keys);
+                var newPathDictionary = new Dictionary<string, Bundle>(_mappings.Paths, KeyComparer);
 
-            try {
-                KeyDictionary[bundleKey] = bundle;
-                PathDictionary[virtualPath] = bundle;
-            }
-            finally {
-                PathLock.ExitWriteLock();
-                KeyLock.ExitWriteLock();
+                newKeyDictionary[bundleKey] = bundle;
+                newPathDictionary[virtualPath] = bundle;
+
+                var @new = new MappingTuple(newKeyDictionary, newPathDictionary);
+                Interlocked.Exchange(ref _mappings, @new);
+
+                return bundle;
             }
 
-            return bundle;
         }
 
         public static bool GetBundleByPath(string virtualPath, out Bundle bundle) {
-            PathLock.EnterReadLock();
-            try {
-                return PathDictionary.TryGetValue(virtualPath, out bundle);
-            }
-            finally {
-                PathLock.ExitReadLock();
-            }
+            return _mappings.Paths.TryGetValue(virtualPath, out bundle);
         }
 
         public static bool GetBundleByKey(string bundleKey, out Bundle bundle) {
-            KeyLock.EnterReadLock();
-            try {
-                return KeyDictionary.TryGetValue(bundleKey, out bundle);
-            } finally {
-                KeyLock.ExitReadLock();
-            }
+            return _mappings.Keys.TryGetValue(bundleKey, out bundle);
         }
 
         public static bool IsBundleKeyRegistered(string bundleKey) {
-            KeyLock.EnterReadLock();
-            try {
-                return KeyDictionary.ContainsKey(bundleKey);
-            } finally {
-                KeyLock.ExitReadLock();
-            }
+            return _mappings.Keys.ContainsKey(bundleKey);
         }
     }
 }

@@ -4,9 +4,7 @@ using System.Threading;
 
 namespace Bundler.Internals {
     public sealed class Container {
-
         private readonly string _placeholder;
-
         private readonly object _writeLock = new object();
         private Tuple<string, int, HashSet<string>> _current = new Tuple<string, int, HashSet<string>>(string.Empty, string.Empty.GetHashCode(), CreateHashSet());
 
