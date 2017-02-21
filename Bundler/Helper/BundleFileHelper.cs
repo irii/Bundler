@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Web;
 using Bundler.Internals;
 
 namespace Bundler.Helper {
@@ -12,11 +13,13 @@ namespace Bundler.Helper {
                 throw new ArgumentException("Path should be virtual!");
             }
 
-            if (!VirtualPathFileHelper.Exists(virtualFile)) {
+            var absoluteFilePath = HttpContext.Current.Server.MapPath(virtualFile);
+
+            if (!File.Exists(absoluteFilePath)) {
                 return bundle;
             }
 
-            var fileContent = File.ReadAllText(VirtualPathFileHelper.GetFullPath(virtualFile));
+            var fileContent = File.ReadAllText(absoluteFilePath);
             bundle.Add(virtualFile, fileContent);
             return bundle;
         }

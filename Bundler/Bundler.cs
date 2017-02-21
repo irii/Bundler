@@ -29,7 +29,7 @@ namespace Bundler {
                 throw new ArgumentException("Query arguments are not allowed!");
             }
 
-            return BundleStore.RegisterKey(bundleKey, virtualPath.Substring(1), contentBundler);
+            return BundleStore.AddOrGet(bundleKey, virtualPath.Substring(1), contentBundler);
         }
 
         public static bool TryGetBundle(string bundleKey, out Bundle bundle) {

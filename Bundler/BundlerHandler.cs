@@ -11,7 +11,7 @@ namespace Bundler {
 
 
         public void ProcessRequest(HttpContext context) {
-            context.Response.Write(_bundle.Get() ?? string.Empty);
+            context.Response.Write(_bundle.Content);
             context.Response.ContentType = _bundle.ContentType;
         }
 

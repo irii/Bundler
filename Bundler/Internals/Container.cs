@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 
 namespace Bundler.Internals {
     public sealed class Container {
         private readonly string _placeholder;
         private readonly object _writeLock = new object();
-        private Tuple<string, int, HashSet<string>> _current = new Tuple<string, int, HashSet<string>>(string.Empty, string.Empty.GetHashCode(), CreateHashSet());
+        private Tuple<string, int, HashSet<string>> _current = new Tuple<string, int, HashSet<string>>(string.Empty, string.Empty.GetHashCode(), CreateHashSet(Enumerable.Empty<string>()));
 
         public Container(string placeholder) {
             _placeholder = placeholder;
@@ -17,6 +18,10 @@ namespace Bundler.Internals {
         }
 
         public void Append(string identifier, string transformedContent) {
+            if (string.IsNullOrWhiteSpace(transformedContent)) {
+                return;
+            }
+
             if (_current.Item3.Contains(identifier)) {
                 return;
             }
@@ -39,18 +44,10 @@ namespace Bundler.Internals {
             }
         }
 
-        public string Get() {
-            return _current.Item1;
-        }
-
-        public int GetVersion() {
-            return _current.Item2;
-        }
+        public string Content => _current.Item1;
+        public int Version => _current.Item2;
 
 
-        private static HashSet<string> CreateHashSet() {
-            return new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
-        }
         private static HashSet<string> CreateHashSet(IEnumerable<string> values) {
             return new HashSet<string>(values, StringComparer.InvariantCultureIgnoreCase);
         }

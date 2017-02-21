@@ -3,10 +3,8 @@ using Bundler.Internals;
 
 namespace Bundler {
     public class Bundle {
-
         public readonly string VirtualPath;
         public readonly string BundleKey;
-
         public readonly string ContentType;
 
         private readonly Container _container;
@@ -15,19 +13,19 @@ namespace Bundler {
         public Bundle(string bundleKey, string virtualPath, IContentBundler contentBundler) {
             BundleKey = bundleKey;
             VirtualPath = virtualPath;
-            _contentBundler = contentBundler;
             ContentType = contentBundler.ContentType;
 
+            _contentBundler = contentBundler;
             _container = new Container(contentBundler.Placeholder);
         }
 
         public bool Add(string identifier, string content) {
-            if (_container.Exists(identifier)) {
-                return true;
-            }
-
             if (string.IsNullOrWhiteSpace(content)) {
                 return false;
+            }
+
+            if (_container.Exists(identifier)) {
+                return true;
             }
 
             using (var transformer = _contentBundler.CreateTransformer()) {
@@ -42,10 +40,12 @@ namespace Bundler {
             return true;
         }
 
-        public string Get() => _container.Get();
+        public int Version => _container.Version;
+
+        public string Content => _container.Content;
 
         public string Render() {
-            return _contentBundler.GenerateTag(string.Concat(VirtualPath, "?v=", _container.GetVersion()));
+            return _contentBundler.GenerateTag(string.Concat(VirtualPath, "?v=", _container.Version));
         }
     }
 }

@@ -20,7 +20,7 @@ namespace Bundler.Internals {
 
         private static MappingTuple _mappings = new MappingTuple(new Dictionary<string, Bundle>(), new Dictionary<string, Bundle>(KeyComparer));
 
-        public static Bundle RegisterKey(string bundleKey, string virtualPath, IContentBundler contentBundler) {
+        public static Bundle AddOrGet(string bundleKey, string virtualPath, IContentBundler contentBundler) {
             Bundle bundle;
             if (_mappings.Keys.TryGetValue(bundleKey, out bundle)) {
                 return bundle;
