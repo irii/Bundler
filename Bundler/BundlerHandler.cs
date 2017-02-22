@@ -17,7 +17,7 @@ namespace Bundler {
 
         public void ProcessRequest(HttpContext context) {
             DateTime lastModification;
-            if (DateTime.TryParseExact(context.Request.Headers["If-Modified-Since"], "r", Thread.CurrentThread.CurrentCulture, DateTimeStyles.None , out lastModification) && lastModification >= _bundle.LastModification) {
+            if (DateTime.TryParseExact(context.Request.Headers["If-Modified-Since"], "r", Thread.CurrentThread.CurrentCulture, DateTimeStyles.None , out lastModification) && lastModification > _bundle.LastModification) {
                 // 304
                 context.Response.StatusCode = 304;
                 return;
