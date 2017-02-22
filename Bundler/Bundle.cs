@@ -1,17 +1,16 @@
-﻿using Bundler.Infrastructure;
+﻿using System;
+using Bundler.Infrastructure;
 using Bundler.Internals;
 
 namespace Bundler {
-    public class Bundle {
-        public readonly string VirtualPath;
-        public readonly string BundleKey;
-        public readonly string ContentType;
+    public class Bundle : IBundle {
+        public string VirtualPath { get; }
+        public string ContentType { get; }
 
         private readonly Container _container;
         private readonly IContentBundler _contentBundler;
 
-        public Bundle(string bundleKey, string virtualPath, IContentBundler contentBundler) {
-            BundleKey = bundleKey;
+        public Bundle(string virtualPath, IContentBundler contentBundler) {
             VirtualPath = virtualPath;
             ContentType = contentBundler.ContentType;
 
@@ -19,7 +18,7 @@ namespace Bundler {
             _container = new Container(contentBundler.Placeholder);
         }
 
-        public bool Add(string identifier, string content) {
+        public bool Append(string identifier, string content) {
             if (string.IsNullOrWhiteSpace(content)) {
                 return false;
             }
@@ -40,12 +39,12 @@ namespace Bundler {
             return true;
         }
 
+        public DateTime LastModification => _container.LastModification;
         public int Version => _container.Version;
-
         public string Content => _container.Content;
 
-        public string Render() {
-            return _contentBundler.GenerateTag(string.Concat(VirtualPath, "?v=", _container.Version));
+        public string GenerateTag(string url) {
+            return _contentBundler.GenerateTag(url);
         }
     }
 }

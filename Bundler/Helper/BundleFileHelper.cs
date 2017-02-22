@@ -1,11 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Web;
-using Bundler.Internals;
+using Bundler.Infrastructure;
 
 namespace Bundler.Helper {
     public static class BundleFileHelper {
-        public static Bundle AddFile(this Bundle bundle, string virtualFile) {
+        public static IBundle AddFile(this IBundle bundle, string virtualFile) {
             if (bundle == null) throw new ArgumentNullException(nameof(bundle));
             if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
 
@@ -20,7 +20,7 @@ namespace Bundler.Helper {
             }
 
             var fileContent = File.ReadAllText(absoluteFilePath);
-            bundle.Add(virtualFile, fileContent);
+            bundle.Append(virtualFile, fileContent);
             return bundle;
         }
     }

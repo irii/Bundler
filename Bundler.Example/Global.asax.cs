@@ -9,8 +9,7 @@ namespace Bundler.Example {
             AreaRegistration.RegisterAllAreas();
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
-            BundleConfig.RegisterBundles();
-
+            BundleConfig.SetupBundler(Bundler.Current);
         }
 
         public override void Init() {

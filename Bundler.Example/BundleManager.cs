@@ -1,13 +1,15 @@
-﻿using System.Web;
+﻿using System;
+using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using Bundler.Css;
 using Bundler.Helper;
+using Bundler.Infrastructure;
 using Bundler.JavaScript;
 
 namespace Bundler.Example {
     public static class BundleManager {
-        private static string ResolveDynamicKey(RouteData routeData, string additionalIdentifier) {
+        private static string ResolveDynamicVirtualPath(RouteData routeData, string additionalIdentifier) {
             if (!routeData.Values.ContainsKey("controller") || !routeData.Values.ContainsKey("action")) {
                 return null;
             }
@@ -19,44 +21,42 @@ namespace Bundler.Example {
                 return null;
             }
 
-            return $"C:{controller.ToLower()}::A:{action.ToLower()}::I:{additionalIdentifier}";
+            return $"~/Dynamic/{controller}/{action}/{additionalIdentifier}";
         }
 
         public static IHtmlString RenderDynamicScripts(RequestContext requestContext) {
-            var key = ResolveDynamicKey(requestContext.RouteData, "Scripts");
+            var key = ResolveDynamicVirtualPath(requestContext.RouteData, "Scripts");
             return key == null 
                 ? MvcHtmlString.Empty 
                 : Bundler.Render(key);
         }
 
         public static IHtmlString RenderDynamicStyles(RequestContext requestContext) {
-            var key = ResolveDynamicKey(requestContext.RouteData, "Styles");
+            var key = ResolveDynamicVirtualPath(requestContext.RouteData, "Styles");
             return key == null
                 ? MvcHtmlString.Empty
                 : Bundler.Render(key);
         }
         
         public static void AddScriptFile(RequestContext requestContext, string scriptFile) {
-            var key = ResolveDynamicKey(requestContext.RouteData, "Scripts");
-            if(key == null) { return; }
+            var virtualPath = ResolveDynamicVirtualPath(requestContext.RouteData, "Scripts");
+            if(virtualPath == null) { return; }
 
-            Bundle bundle;
-            if (!Bundler.TryGetBundle(key, out bundle)) {
-                var path = $"~/Scripts/{requestContext.RouteData.Values["controller"]}/{requestContext.RouteData.Values["action"]}";
-                bundle = Bundler.AddBundle(key, path, JavaScriptContentBundler.Instance);
+            IBundle bundle;
+            if (!Bundler.Current.AddOrGet(virtualPath, () => JavaScriptContentBundler.Instance, out bundle)) {
+                throw new Exception($"Failed to create bundle. ({virtualPath})");
             }
 
             bundle.AddFile(scriptFile);
         }
 
         public static void AddCssFile(RequestContext requestContext, string cssFile) {
-            var key = ResolveDynamicKey(requestContext.RouteData, "Styles");
-            if (key == null) { return; }
+            var virtualPath = ResolveDynamicVirtualPath(requestContext.RouteData, "Styles");
+            if (virtualPath == null) { return; }
 
-            Bundle bundle;
-            if (!Bundler.TryGetBundle(key, out bundle)) {
-                var path = $"~/Styles/{requestContext.RouteData.Values["controller"]}/{requestContext.RouteData.Values["action"]}";
-                bundle = Bundler.AddBundle(key, path, CssContentBundler.Instance);
+            IBundle bundle;
+            if (!Bundler.Current.AddOrGet(virtualPath, () => CssContentBundler.Instance, out bundle)) {
+                throw new Exception($"Failed to create bundle. ({virtualPath})");
             }
 
             bundle.AddFile(cssFile);

@@ -1,11 +1,12 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using Bundler.Infrastructure;
 using Bundler.Internals;
 
 namespace Bundler.Helper {
     public static class BundleDirectoryHelper {
-        public static Bundle AddDirectory(this Bundle bundle, string virtualPath, string searchPattern) {
+        public static IBundle AddDirectory(this IBundle bundle, string virtualPath, string searchPattern) {
             if (bundle == null) throw new ArgumentNullException(nameof(bundle));
             if (virtualPath == null) throw new ArgumentNullException(nameof(virtualPath));
             if (searchPattern == null) throw new ArgumentNullException(nameof(searchPattern));
@@ -25,7 +26,7 @@ namespace Bundler.Helper {
                 var virtualFile = file.Replace(serverPath, "~/").Replace("\\", "/");
 
                 var fileContent = File.ReadAllText(file);
-                bundle.Add(virtualFile, fileContent);
+                bundle.Append(virtualFile, fileContent);
             }
 
             return bundle;

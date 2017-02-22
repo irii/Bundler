@@ -1,29 +1,36 @@
-﻿using Bundler.Css;
+﻿using System;
+using Bundler.Css;
 using Bundler.Helper;
+using Bundler.Infrastructure;
 using Bundler.JavaScript;
 
 namespace Bundler.Example {
     public class BundleConfig {
-        public const string ApplicationScriptsBundleKey = "AppScripts";
-        public const string ApplicationStylesBundleKey = "AppStyles";
+        public const string ApplicationScriptsBundleKey = "~/Scripts/Application";
+        public const string ApplicationStylesBundleKey = "~/Styles/Application";
 
-        public static Bundle ScriptBundle;
-        public static Bundle StyleBundle;
+        public static IBundle ScriptBundle;
+        public static IBundle StyleBundle;
 
-        public static void RegisterBundles() {
-            ScriptBundle = Bundler.AddBundle(ApplicationScriptsBundleKey, "~/Scripts", JavaScriptContentBundler.Instance);
-            StyleBundle = Bundler.AddBundle(ApplicationStylesBundleKey, "~/Styles", CssContentBundler.Instance);
+        public static void SetupBundler(IBundleProvider bundleProvider) {
+            if (!bundleProvider.Add(ApplicationScriptsBundleKey, JavaScriptContentBundler.Instance, out ScriptBundle)) {
+                throw new Exception("Can't setup script bundle.");
+            }
+
+            if (!bundleProvider.Add(ApplicationStylesBundleKey, CssContentBundler.Instance, out StyleBundle)) {
+                throw new Exception("Can't setup style bundle.");
+            }
 
             // Scripts
-            ScriptBundle.AddFile("~/Scripts/jquery-1.10.2.js");
-            ScriptBundle.AddFile("~/Scripts/jquery.validate.js");
-            ScriptBundle.AddFile("~/Scripts/modernizr-2.6.2.js");
-            ScriptBundle.AddFile("~/Scripts/bootstrap.js");
-            ScriptBundle.AddFile("~/Scripts/respond.js");
+            ScriptBundle.AddFile("~/Scripts/jquery-1.10.2.js")
+                .AddFile("~/Scripts/jquery.validate.js")
+                .AddFile("~/Scripts/modernizr-2.6.2.js")
+                .AddFile("~/Scripts/bootstrap.js")
+                .AddFile("~/Scripts/respond.js");
 
             // Styles
-            StyleBundle.AddFile("~/Content/bootstrap.css");
-            StyleBundle.AddFile("~/Content/site.css");
+            StyleBundle.AddFile("~/Content/bootstrap.css")
+                .AddFile("~/Content/site.css");
         }
     }
 }

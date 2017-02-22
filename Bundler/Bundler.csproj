@@ -62,17 +62,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BundleProvider.cs" />
     <Compile Include="Bundler.cs" />
     <Compile Include="BundlerHandler.cs" />
     <Compile Include="BundlerModule.cs" />
     <Compile Include="Helper\BundleDirectoryHelper.cs" />
     <Compile Include="Helper\BundleFileHelper.cs" />
-    <Compile Include="Helper\BundleMvcRenderHelper.cs" />
     <Compile Include="Bundle.cs" />
+    <Compile Include="Infrastructure\IBundle.cs" />
+    <Compile Include="Infrastructure\IBundleProvider.cs" />
+    <Compile Include="Infrastructure\IBundleProviderConfiguration.cs" />
     <Compile Include="Internals\Container.cs" />
     <Compile Include="Infrastructure\IContentBundler.cs" />
     <Compile Include="Infrastructure\IContentTransformer.cs" />
-    <Compile Include="Internals\BundleStore.cs" />
     <Compile Include="Internals\VirtualPathFileHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

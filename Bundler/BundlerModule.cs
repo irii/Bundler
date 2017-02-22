@@ -10,8 +10,8 @@ namespace Bundler {
         private static void Context_PostResolveRequestCache(object sender, System.EventArgs e) {
             var app = (HttpApplication) sender;
 
-            Bundle bundle;
-            if (Bundler.IsBundleRequest(app.Request.Url, out bundle)) {
+            IBundle bundle;
+            if (Bundler.Current.Get(app.Request.Url.AbsolutePath, out bundle)) {
                 app.Context.RemapHandler(new BundlerHandler(bundle));
             }
         }
