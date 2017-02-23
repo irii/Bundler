@@ -6,11 +6,13 @@ namespace Bundler {
     public class Bundle : IBundle {
         public string VirtualPath { get; }
         public string ContentType { get; }
+        public IBundleContext Context { get; }
 
         private readonly Container _container;
         private readonly IContentBundler _contentBundler;
 
-        public Bundle(string virtualPath, IContentBundler contentBundler) {
+        public Bundle(IBundleContext bundleContext, string virtualPath, IContentBundler contentBundler) {
+            Context = bundleContext;
             VirtualPath = virtualPath;
             ContentType = contentBundler.ContentType;
 
@@ -29,8 +31,13 @@ namespace Bundler {
 
             using (var transformer = _contentBundler.CreateTransformer()) {
                 string processedContent;
-                if (!transformer.Process(content, out processedContent)) {
-                    return false;
+
+                if (!transformer.Process(Context, content, out processedContent)) {
+                    if (!Context.FallbackOnError) {
+                        return false;
+                    }
+
+                    processedContent = content.Trim();
                 }
 
                 _container.Append(identifier, processedContent);
@@ -46,5 +53,6 @@ namespace Bundler {
         public string GenerateTag(string url) {
             return _contentBundler.GenerateTag(url);
         }
+
     }
 }

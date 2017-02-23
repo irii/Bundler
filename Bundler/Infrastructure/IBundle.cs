@@ -2,6 +2,8 @@
 
 namespace Bundler.Infrastructure {
     public interface IBundle {
+        IBundleContext Context { get; }
+
         string VirtualPath { get; }
 
         string ContentType { get; }

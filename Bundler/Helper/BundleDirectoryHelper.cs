@@ -15,12 +15,12 @@ namespace Bundler.Helper {
                 throw new ArgumentException("Path should be virtual!");
             }
 
-            var absolutePath = VirtualPathFileHelper.GetFullPath(virtualPath);
+            var absolutePath = VirtualPathHelper.GetFullPath(virtualPath);
             if (!Directory.Exists(absolutePath)) {
                 return bundle;
             }
 
-            var serverPath = VirtualPathFileHelper.GetFullPath("~/");
+            var serverPath = VirtualPathHelper.GetFullPath("~/");
             var files = Directory.EnumerateFiles(absolutePath, searchPattern);
             foreach (var file in files.Where(x => x.StartsWith(serverPath, StringComparison.InvariantCultureIgnoreCase))) {
                 var virtualFile = file.Replace(serverPath, "~/").Replace("\\", "/");

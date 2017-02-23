@@ -1,11 +1,12 @@
 ﻿using System;
 
 namespace Bundler.Infrastructure {
-    public interface IBundleProviderConfiguration {
+    public interface IBundleContext {
         bool Optimization { get; }
         bool Cache { get; }
+        bool FallbackOnError { get; }
         TimeSpan CacheDuration { get; }
 
-        bool PassthroughOnError { get; }
+        string GetFullPath(string virtualPath);
     }
 }

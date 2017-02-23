@@ -6,9 +6,9 @@ namespace Bundler.JavaScript {
     public class JavaScriptContentTransformer : IContentTransformer {
         void IDisposable.Dispose() { }
 
-        bool IContentTransformer.Process(string inputContent, out string outputContent) {
-            if (string.IsNullOrWhiteSpace(inputContent)) {
-                outputContent = string.Empty;
+        bool IContentTransformer.Process(IBundleContext bundleContext, string inputContent, out string outputContent) {
+            if (!bundleContext.Optimization || string.IsNullOrWhiteSpace(inputContent)) {
+                outputContent = inputContent?.Trim() ?? string.Empty;
                 return true;
             }
 

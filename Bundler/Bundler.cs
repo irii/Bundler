@@ -5,7 +5,7 @@ using Bundler.Infrastructure;
 
 namespace Bundler {
     public static class Bundler {
-        private static readonly IBundleProvider DefaultBundleProvider = new BundleProvider(null);
+        private static readonly IBundleProvider DefaultBundleProvider = new BundleProvider(new DefaultBundleContext());
 
         private static readonly object WriteLock = new object();
         private static IBundleProvider _currentBundleProvider;
@@ -20,12 +20,7 @@ namespace Bundler {
         }
 
         public static IHtmlString Render(string virtualPath) {
-            IBundle bundle;
-            if (Current.Get(virtualPath, out bundle)) {
-                return MvcHtmlString.Create(bundle.GenerateTag(VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + bundle.Version));
-            }
-            
-            return MvcHtmlString.Empty;
+            return new MvcHtmlString(Current.Render(virtualPath));
         }
     }
 }

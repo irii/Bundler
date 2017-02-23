@@ -66,16 +66,17 @@
     <Compile Include="Bundler.cs" />
     <Compile Include="BundlerHandler.cs" />
     <Compile Include="BundlerModule.cs" />
+    <Compile Include="DefaultBundleContext.cs" />
     <Compile Include="Helper\BundleDirectoryHelper.cs" />
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Bundle.cs" />
     <Compile Include="Infrastructure\IBundle.cs" />
     <Compile Include="Infrastructure\IBundleProvider.cs" />
-    <Compile Include="Infrastructure\IBundleProviderConfiguration.cs" />
+    <Compile Include="Infrastructure\IBundleContext.cs" />
     <Compile Include="Internals\Container.cs" />
     <Compile Include="Infrastructure\IContentBundler.cs" />
     <Compile Include="Infrastructure\IContentTransformer.cs" />
-    <Compile Include="Internals\VirtualPathFileHelper.cs" />
+    <Compile Include="Internals\VirtualPathHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

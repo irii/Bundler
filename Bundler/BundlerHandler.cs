@@ -16,22 +16,23 @@ namespace Bundler {
 
 
         public void ProcessRequest(HttpContext context) {
-            // TODO: Add cache enable setting.
-
-            DateTime lastModification;
-            var lastModificationRaw = context.Request.Headers[IfModifiedSinceHeader];
-            if (!string.IsNullOrWhiteSpace(lastModificationRaw) && DateTime.TryParse(lastModificationRaw, out lastModification) && lastModification > _bundle.LastModification) {
-                context.Response.StatusCode = 304;
-                return;
+            if (_bundle.Context.Cache) {
+                DateTime lastModification;
+                var lastModificationRaw = context.Request.Headers[IfModifiedSinceHeader];
+                if (!string.IsNullOrWhiteSpace(lastModificationRaw) && DateTime.TryParse(lastModificationRaw, out lastModification) && lastModification > _bundle.LastModification) {
+                    context.Response.StatusCode = 304;
+                    return;
+                }
             }
 
             context.Response.Write(_bundle.Content);
             context.Response.ContentType = _bundle.ContentType;
             context.Response.StatusCode = 200;
 
-            // TODO: Add cache enable setting.
-            context.Response.Cache.SetLastModified(_bundle.LastModification);
-            context.Response.Cache.SetExpires(DateTime.Now.AddYears(1));
+            if (_bundle.Context.Cache) {
+                context.Response.Cache.SetLastModified(_bundle.LastModification);
+                context.Response.Cache.SetExpires(DateTime.Now.Add(_bundle.Context.CacheDuration));
+            }
         }
 
     }

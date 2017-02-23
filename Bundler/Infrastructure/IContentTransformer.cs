@@ -2,6 +2,6 @@
 
 namespace Bundler.Infrastructure {
     public interface IContentTransformer : IDisposable {
-        bool Process(string inputContent, out string outputContent);
+        bool Process(IBundleContext bundleContext, string inputContent, out string outputContent);
     }
 }

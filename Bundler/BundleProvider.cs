@@ -1,18 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Threading;
+using System.Web;
+using System.Web.Hosting;
 using Bundler.Infrastructure;
 
 namespace Bundler {
     public class BundleProvider : IBundleProvider {
-        public IBundleProviderConfiguration Configuration { get; }
+        public IBundleContext Context { get; }
 
         private readonly object _currentBundleMappingsWriteLock = new object();
         private BundleMappings _currentBundleMappings = BundleMappings.Empty();
 
-        public BundleProvider(IBundleProviderConfiguration configuration) {
-            //if (configuration == null) throw new ArgumentNullException(nameof(configuration));
-            Configuration = configuration;
+        public BundleProvider(IBundleContext context) {
+            //if (context == null) throw new ArgumentNullException(nameof(context));
+            Context = context;
         } 
 
         public bool AddOrGet(string virtualPath, Func<IContentBundler> contentBundlerFactory, out IBundle bundle) {
@@ -30,7 +32,7 @@ namespace Bundler {
                     return true;
                 }
 
-                bundle = new Bundle(virtualPath, contentBundlerFactory());
+                bundle = new Bundle(Context, virtualPath, contentBundlerFactory());
                 var newPathDictionary = _currentBundleMappings.CreatePathDictionary();
 
                 newPathDictionary[virtualPath] = bundle;
@@ -59,7 +61,7 @@ namespace Bundler {
                     return false;
                 }
 
-                bundle = new Bundle(virtualPath, contentBundler);
+                bundle = new Bundle(Context, virtualPath, contentBundler);
                 var newPathDictionary = _currentBundleMappings.CreatePathDictionary();
 
                 newPathDictionary[virtualPath] = bundle;
@@ -101,6 +103,15 @@ namespace Bundler {
             }
 
             return '~' + virtualPath;
+        }
+
+        public string Render(string virtualPath) {
+            IBundle bundle;
+            if (Get(virtualPath, out bundle)) {
+                return bundle.GenerateTag(VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + bundle.Version);
+            }
+
+            return string.Empty;
         }
 
         private class BundleMappings {
