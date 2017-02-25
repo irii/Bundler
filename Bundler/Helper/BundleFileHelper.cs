@@ -20,7 +20,7 @@ namespace Bundler.Helper {
             }
 
             var fileContent = File.ReadAllText(absoluteFilePath);
-            bundle.Append(virtualFile, fileContent);
+            bundle.Include(virtualFile, fileContent);
             return bundle;
         }
     }

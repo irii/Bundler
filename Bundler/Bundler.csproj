@@ -64,6 +64,7 @@
   <ItemGroup>
     <Compile Include="BundleProvider.cs" />
     <Compile Include="Bundler.cs" />
+    <Compile Include="BundleResponse.cs" />
     <Compile Include="BundlerHandler.cs" />
     <Compile Include="BundlerModule.cs" />
     <Compile Include="DefaultBundleContext.cs" />
@@ -74,7 +75,6 @@
     <Compile Include="Infrastructure\IBundleProvider.cs" />
     <Compile Include="Infrastructure\IBundleContext.cs" />
     <Compile Include="Internals\Container.cs" />
-    <Compile Include="Infrastructure\IContentBundler.cs" />
     <Compile Include="Infrastructure\IContentTransformer.cs" />
     <Compile Include="Internals\VirtualPathHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

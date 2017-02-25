@@ -1,33 +1,44 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 
 namespace Bundler.Internals {
     public sealed class Container {
         private readonly string _placeholder;
         private readonly object _writeLock = new object();
-        private Tuple<string, int, DateTime, HashSet<string>> _current = new Tuple<string, int, DateTime, HashSet<string>>(string.Empty, string.Empty.GetHashCode(), DateTime.Now, CreateHashSet(Enumerable.Empty<string>()));
+
+        private Tuple<string, int, DateTime, Dictionary<string, string>> _current = new Tuple<string, int, DateTime, Dictionary<string, string>>(string.Empty, string.Empty.GetHashCode(), DateTime.Now, CreateDictionary(new Dictionary<string, string>(0)));
 
         public Container(string placeholder) {
             _placeholder = placeholder;
         }
 
         public bool Exists(string identifier) {
-            return _current.Item4.Contains(identifier);
+            return _current.Item4.ContainsKey(identifier);
         }
 
-        public void Append(string identifier, string transformedContent) {
+        public ICollection<string> GetFiles() => _current.Item4.Keys;
+
+        public string GetFile(string virtualFile) {
+            string content;
+            if (_current.Item4.TryGetValue(virtualFile, out content)) {
+                return content ?? string.Empty;
+            }
+
+            return null;
+        }
+
+        public void Append(string virtualFile, string transformedContent) {
             if (string.IsNullOrWhiteSpace(transformedContent)) {
                 return;
             }
 
-            if (_current.Item4.Contains(identifier)) {
+            if (_current.Item4.ContainsKey(virtualFile)) {
                 return;
             }
 
             lock (_writeLock) {
-                if (_current.Item4.Contains(identifier)) {
+                if (_current.Item4.ContainsKey(virtualFile)) {
                     return;
                 }
 
@@ -35,10 +46,10 @@ namespace Bundler.Internals {
                     ? string.Concat(_current.Item1, transformedContent)
                     : string.Concat(_current.Item1, _placeholder, transformedContent);
 
-                var hashSet = CreateHashSet(_current.Item4);
-                hashSet.Add(identifier);
+                var dictionary = CreateDictionary(_current.Item4);
+                dictionary.Add(virtualFile, transformedContent);
                 
-                var @new = new Tuple<string, int, DateTime, HashSet<string>>(newContent, newContent.GetHashCode(), DateTime.Now, hashSet);
+                var @new = new Tuple<string, int, DateTime, Dictionary<string, string>>(newContent, newContent.GetHashCode(), DateTime.Now, dictionary);
 
                 Interlocked.Exchange(ref _current, @new);
             }
@@ -49,8 +60,8 @@ namespace Bundler.Internals {
         public int Version => _current.Item2;
 
 
-        private static HashSet<string> CreateHashSet(IEnumerable<string> values) {
-            return new HashSet<string>(values, StringComparer.InvariantCultureIgnoreCase);
+        private static Dictionary<string, string> CreateDictionary(IDictionary<string, string> values) {
+            return new Dictionary<string, string>(values, StringComparer.InvariantCultureIgnoreCase);
         }
     }
 }

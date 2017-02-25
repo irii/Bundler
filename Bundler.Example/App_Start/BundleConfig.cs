@@ -13,11 +13,14 @@ namespace Bundler.Example {
         public static IBundle StyleBundle;
 
         public static void SetupBundler(IBundleProvider bundleProvider) {
-            if (!bundleProvider.Add(ApplicationScriptsBundleKey, JavaScriptContentBundler.Instance, out ScriptBundle)) {
+            ScriptBundle = bundleProvider.CreateScriptBundle();
+            StyleBundle = bundleProvider.CreateCssBundle();
+
+            if (!bundleProvider.Add(ApplicationScriptsBundleKey, ScriptBundle)) {
                 throw new Exception("Can't setup script bundle.");
             }
 
-            if (!bundleProvider.Add(ApplicationStylesBundleKey, CssContentBundler.Instance, out StyleBundle)) {
+            if (!bundleProvider.Add(ApplicationStylesBundleKey, StyleBundle)) {
                 throw new Exception("Can't setup style bundle.");
             }
 

@@ -26,7 +26,7 @@ namespace Bundler.Helper {
                 var virtualFile = file.Replace(serverPath, "~/").Replace("\\", "/");
 
                 var fileContent = File.ReadAllText(file);
-                bundle.Append(virtualFile, fileContent);
+                bundle.Include(virtualFile, fileContent);
             }
 
             return bundle;

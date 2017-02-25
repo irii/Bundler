@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Threading;
 using System.Web;
-using System.Web.Hosting;
 using Bundler.Infrastructure;
 
 namespace Bundler {
@@ -13,57 +13,26 @@ namespace Bundler {
         private BundleMappings _currentBundleMappings = BundleMappings.Empty();
 
         public BundleProvider(IBundleContext context) {
-            //if (context == null) throw new ArgumentNullException(nameof(context));
+            if (context == null) throw new ArgumentNullException(nameof(context));
             Context = context;
-        } 
-
-        public bool AddOrGet(string virtualPath, Func<IContentBundler> contentBundlerFactory, out IBundle bundle) {
-            if (virtualPath == null) throw new ArgumentNullException(nameof(virtualPath));
-            if (contentBundlerFactory == null) throw new ArgumentNullException(nameof(contentBundlerFactory));
-
-            ValidateVirtualPath(virtualPath);
-
-            if (_currentBundleMappings.Paths.TryGetValue(virtualPath, out bundle)) {
-                return true;
-            }
-
-            lock (_currentBundleMappingsWriteLock) {
-                if (_currentBundleMappings.Paths.TryGetValue(virtualPath, out bundle)) {
-                    return true;
-                }
-
-                bundle = new Bundle(Context, virtualPath, contentBundlerFactory());
-                var newPathDictionary = _currentBundleMappings.CreatePathDictionary();
-
-                newPathDictionary[virtualPath] = bundle;
-
-                var @new = new BundleMappings(newPathDictionary);
-                Interlocked.Exchange(ref _currentBundleMappings, @new);
-
-                return true;
-            }
         }
 
-        public bool Add(string virtualPath, IContentBundler contentBundler, out IBundle bundle) {
+        public bool Add(string virtualPath, IBundle bundle) {
             if (virtualPath == null) throw new ArgumentNullException(nameof(virtualPath));
-            if (contentBundler == null) throw new ArgumentNullException(nameof(contentBundler));
+            if (bundle == null) throw new ArgumentNullException(nameof(bundle));
 
             ValidateVirtualPath(virtualPath);
 
             if (_currentBundleMappings.Paths.ContainsKey(virtualPath)) {
-                bundle = null;
                 return false;
             }
 
             lock (_currentBundleMappingsWriteLock) {
                 if (_currentBundleMappings.Paths.ContainsKey(virtualPath)) {
-                    bundle = null;
                     return false;
                 }
 
-                bundle = new Bundle(Context, virtualPath, contentBundler);
                 var newPathDictionary = _currentBundleMappings.CreatePathDictionary();
-
                 newPathDictionary[virtualPath] = bundle;
 
                 var @new = new BundleMappings(newPathDictionary);
@@ -107,11 +76,27 @@ namespace Bundler {
 
         public string Render(string virtualPath) {
             IBundle bundle;
-            if (Get(virtualPath, out bundle)) {
-                return bundle.GenerateTag(VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + bundle.Version);
+            if (!Get(virtualPath, out bundle)) {
+                return string.Empty;
             }
 
-            return string.Empty;
+            var response = bundle.GetResponse();
+
+            if (bundle.Context.BundleFiles) {
+                return string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + response.Version);
+            }
+
+            var sB = new StringBuilder();
+            foreach (var file in response.BundleFiles) {
+                var content = response.GetFile(file);
+                if (content == null) {
+                    continue;
+                }
+                
+                sB.AppendLine(string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + response.Version + "&f=" + Uri.EscapeDataString(file)));
+            }
+
+            return sB.ToString();
         }
 
         private class BundleMappings {

@@ -7,6 +7,8 @@ namespace Bundler.Infrastructure {
         bool FallbackOnError { get; }
         TimeSpan CacheDuration { get; }
 
+        bool BundleFiles { get; }
+
         string GetFullPath(string virtualPath);
     }
 }

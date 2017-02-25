@@ -16,6 +16,7 @@ namespace Bundler {
         public bool Optimization { get; set; }
         public bool Cache { get; set; }
         public bool FallbackOnError { get; set; }
+        public bool BundleFiles { get; set; }
         public TimeSpan CacheDuration { get; set; }
     }
 }
