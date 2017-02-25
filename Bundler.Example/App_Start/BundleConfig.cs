@@ -1,20 +1,20 @@
 ﻿using System;
-using Bundler.Css;
 using Bundler.Helper;
 using Bundler.Infrastructure;
 using Bundler.JavaScript;
+using Bundler.Less;
 
 namespace Bundler.Example {
     public class BundleConfig {
         public const string ApplicationScriptsBundleKey = "~/Scripts/Application";
         public const string ApplicationStylesBundleKey = "~/Styles/Application";
 
-        public static IBundle ScriptBundle;
-        public static IBundle StyleBundle;
+        public static IBundle ScriptBundle { get; private set; }
+        public static IBundle StyleBundle { get; private set; }
 
         public static void SetupBundler(IBundleProvider bundleProvider) {
             ScriptBundle = bundleProvider.CreateScriptBundle();
-            StyleBundle = bundleProvider.CreateCssBundle();
+            StyleBundle = bundleProvider.CreateLessBundle();
 
             if (!bundleProvider.Add(ApplicationScriptsBundleKey, ScriptBundle)) {
                 throw new Exception("Can't setup script bundle.");

@@ -1,18 +1,42 @@
-﻿using System.Web;
+﻿using System.Runtime.CompilerServices;
+using System.Web;
 using Bundler.Infrastructure;
 
 namespace Bundler {
     public sealed class BundlerModule : IHttpModule {
-        public void Init(HttpApplication context) {
-            context.PostResolveRequestCache += Context_PostResolveRequestCache;
+        private readonly IBundleProvider _bundleProvider;
+        public BundlerModule() {}
+
+        public BundlerModule(IBundleProvider bundleProvider) {
+            _bundleProvider = bundleProvider;
         }
 
-        private static void Context_PostResolveRequestCache(object sender, System.EventArgs e) {
+        public void Init(HttpApplication context) {
+            if (_bundleProvider == null) {
+                context.PostResolveRequestCache += Context_PostResolveRequestCache_Default;
+            } else {
+                context.PostResolveRequestCache += Context_PostResolveRequestCache;
+            }
+        }
+
+        private void Context_PostResolveRequestCache(object sender, System.EventArgs e) {
+            var app = (HttpApplication)sender;
+            TryRemapHandler(app, _bundleProvider);
+        }
+
+        private static void Context_PostResolveRequestCache_Default(object sender, System.EventArgs e) {
             var app = (HttpApplication) sender;
+            TryRemapHandler(app, Bundler.Current);
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static void TryRemapHandler(HttpApplication app, IBundleProvider provider) {
+            int requestVersion;
+            string requestFile;
 
             IBundle bundle;
-            if (Bundler.Current.Get(app.Request.Url.AbsolutePath, out bundle)) {
-                app.Context.RemapHandler(new BundlerHandler(bundle));
+            if (provider.ResolveUri(app.Request.Url, out bundle, out requestVersion, out requestFile)) {
+                app.Context.RemapHandler(new BundlerHandler(bundle, requestVersion, requestFile));
             }
         }
 

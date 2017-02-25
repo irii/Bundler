@@ -74,6 +74,7 @@
     <Compile Include="Infrastructure\IBundle.cs" />
     <Compile Include="Infrastructure\IBundleProvider.cs" />
     <Compile Include="Infrastructure\IBundleContext.cs" />
+    <Compile Include="Infrastructure\IBundleResponse.cs" />
     <Compile Include="Internals\Container.cs" />
     <Compile Include="Infrastructure\IContentTransformer.cs" />
     <Compile Include="Internals\VirtualPathHelper.cs" />

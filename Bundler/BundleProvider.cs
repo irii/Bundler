@@ -7,10 +7,10 @@ using Bundler.Infrastructure;
 
 namespace Bundler {
     public class BundleProvider : IBundleProvider {
-        public IBundleContext Context { get; }
-
         private readonly object _currentBundleMappingsWriteLock = new object();
         private BundleMappings _currentBundleMappings = BundleMappings.Empty();
+
+        public IBundleContext Context { get; }
 
         public BundleProvider(IBundleContext context) {
             if (context == null) throw new ArgumentNullException(nameof(context));
@@ -43,18 +43,63 @@ namespace Bundler {
         }
 
         public bool Get(string virtualPath, out IBundle bundle) {
-            if (string.IsNullOrEmpty(virtualPath))
+            if (string.IsNullOrEmpty(virtualPath)) {
                 throw new ArgumentException("Value cannot be null or empty.", nameof(virtualPath));
+            }
 
             return _currentBundleMappings.Paths.TryGetValue(PrepareVirtualPath(virtualPath), out bundle);
         }
 
         public bool Exists(string virtualPath) {
-            if (string.IsNullOrEmpty(virtualPath))
+            if (string.IsNullOrEmpty(virtualPath)) {
                 throw new ArgumentException("Value cannot be null or empty.", nameof(virtualPath));
+            }
 
             return _currentBundleMappings.Paths.ContainsKey(PrepareVirtualPath(virtualPath));
         }
+
+        public bool ResolveUri(Uri uri, out IBundle bundle, out int requestVersion, out string requestFile) {
+            if (!Get(uri.AbsolutePath, out bundle)) {
+                requestVersion = 0;
+                requestFile = null;
+                return false;
+            }
+
+            var queryArgs = HttpUtility.ParseQueryString(uri.Query);
+            var vArg = queryArgs["v"]?.Trim();
+            var fArg = queryArgs["f"]?.Trim();
+
+            int.TryParse(vArg, out requestVersion);
+            requestFile = string.IsNullOrWhiteSpace(fArg) ? null : fArg;
+
+            return true;
+        }
+
+        public string Render(string virtualPath) {
+            IBundle bundle;
+            if (!Get(virtualPath, out bundle)) {
+                return string.Empty;
+            }
+
+            var response = bundle.GetResponse();
+
+            if (bundle.Context.BundleFiles) {
+                return string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + response.Version);
+            }
+
+            var sB = new StringBuilder();
+            foreach (var file in response.Files) {
+                var content = response.GetFileContent(file);
+                if (content == null) {
+                    continue;
+                }
+
+                sB.AppendLine(string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + response.Version + "&f=" + Uri.EscapeDataString(file)));
+            }
+
+            return sB.ToString();
+        }
+
 
         private static void ValidateVirtualPath(string virtualPath) {
             if (!virtualPath.StartsWith("~/")) {
@@ -74,30 +119,6 @@ namespace Bundler {
             return '~' + virtualPath;
         }
 
-        public string Render(string virtualPath) {
-            IBundle bundle;
-            if (!Get(virtualPath, out bundle)) {
-                return string.Empty;
-            }
-
-            var response = bundle.GetResponse();
-
-            if (bundle.Context.BundleFiles) {
-                return string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + response.Version);
-            }
-
-            var sB = new StringBuilder();
-            foreach (var file in response.BundleFiles) {
-                var content = response.GetFile(file);
-                if (content == null) {
-                    continue;
-                }
-                
-                sB.AppendLine(string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + response.Version + "&f=" + Uri.EscapeDataString(file)));
-            }
-
-            return sB.ToString();
-        }
 
         private class BundleMappings {
             private static readonly IEqualityComparer<string> PathComparer = StringComparer.InvariantCultureIgnoreCase;

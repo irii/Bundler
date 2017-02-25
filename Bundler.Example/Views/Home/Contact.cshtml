@@ -1,6 +1,7 @@
-﻿@{
+﻿@using Bundler.Example.Application
+@{
     ViewBag.Title = "Contact";
-    BundleManager.AddCssFile(Request.RequestContext, "~/Content/Contact.css");
+    Bundles.AddCssFile("~/Content/Contact.css");
 }
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.Message</h3>

@@ -13,7 +13,11 @@ namespace Bundler.JavaScript {
             }
 
             var minifier = new Minifier();
-            outputContent = minifier.MinifyJavaScript(inputContent, new CodeSettings() { EvalTreatment = EvalTreatment.MakeImmediateSafe, PreserveImportantComments = false })?.Trim() ?? string.Empty;
+            outputContent = minifier.MinifyJavaScript(inputContent, new CodeSettings() {
+                EvalTreatment = EvalTreatment.MakeImmediateSafe,
+                PreserveImportantComments = false
+            })?.Trim() ?? string.Empty;
+
             return true;
         }
     }

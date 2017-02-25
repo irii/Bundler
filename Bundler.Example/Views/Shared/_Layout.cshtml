@@ -1,20 +1,13 @@
-﻿@using Bundler
-@using Bundler.Helper
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title - My ASP.NET Application</title>
-    @Bundler.Render(BundleConfig.ApplicationStylesBundleKey)
-    @Bundler.Render(BundleConfig.ApplicationScriptsBundleKey)
-    
-    
-    @*@BundleConfig.StyleBundle.RenderMvc()
-    @BundleConfig.ScriptBundle.RenderMvc()*@
-
-    @BundleManager.RenderDynamicScripts(Request.RequestContext)
-    @BundleManager.RenderDynamicStyles(Request.RequestContext)
+    @Bundles.Render(BundleConfig.ApplicationStylesBundleKey)
+    @Bundles.Render(BundleConfig.ApplicationScriptsBundleKey)
+    @Bundles.RenderDynamicScripts()
+    @Bundles.RenderDynamicStyles()
 </head>
 <body>
     <div class="navbar navbar-inverse navbar-fixed-top">

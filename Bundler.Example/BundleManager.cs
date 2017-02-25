@@ -2,13 +2,23 @@
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
-using Bundler.Css;
 using Bundler.Helper;
 using Bundler.Infrastructure;
 using Bundler.JavaScript;
+using Bundler.Less;
 
 namespace Bundler.Example {
-    public static class BundleManager {
+    public class BundleManager {
+        private readonly IBundleProvider _bundleProvider;
+        private readonly RequestContext _requestContext;
+
+        public BundleManager(IBundleProvider bundleProvider, RequestContext requestContext) {
+            _bundleProvider = bundleProvider;
+            _requestContext = requestContext;
+        }
+
+        public IHtmlString Render(string virtualPath) => new MvcHtmlString(_bundleProvider.Render(virtualPath));
+
         private static string ResolveDynamicVirtualPath(RouteData routeData, string additionalIdentifier) {
             if (!routeData.Values.ContainsKey("controller") || !routeData.Values.ContainsKey("action")) {
                 return null;
@@ -24,49 +34,46 @@ namespace Bundler.Example {
             return $"~/Dynamic/{controller}/{action}/{additionalIdentifier}";
         }
 
-        public static IHtmlString RenderDynamicScripts(RequestContext requestContext) {
-            var key = ResolveDynamicVirtualPath(requestContext.RouteData, "Scripts");
+        public IHtmlString RenderDynamicScripts() {
+            var key = ResolveDynamicVirtualPath(_requestContext.RouteData, "Scripts");
             return key == null
                 ? MvcHtmlString.Empty
-                : Bundler.Render(key);
+                : new MvcHtmlString(_bundleProvider.Render(key));
         }
 
-        public static IHtmlString RenderDynamicStyles(RequestContext requestContext) {
-            var key = ResolveDynamicVirtualPath(requestContext.RouteData, "Styles");
+        public IHtmlString RenderDynamicStyles() {
+            var key = ResolveDynamicVirtualPath(_requestContext.RouteData, "Styles");
             return key == null
                 ? MvcHtmlString.Empty
-                : Bundler.Render(key);
+                : new MvcHtmlString(_bundleProvider.Render(key));
         }
 
-        public static void AddScriptFile(RequestContext requestContext, string scriptFile) {
-            var virtualPath = ResolveDynamicVirtualPath(requestContext.RouteData, "Scripts");
+        public void AddScriptFile(string scriptFile) {
+            var virtualPath = ResolveDynamicVirtualPath(_requestContext.RouteData, "Scripts");
             if (virtualPath == null) { return; }
 
-            var bundleProvider = Bundler.Current;
 
             IBundle bundle;
-            if (!bundleProvider.Get(virtualPath, out bundle)) {
-                bundleProvider.Add(virtualPath, bundleProvider.CreateScriptBundle());
+            if (!_bundleProvider.Get(virtualPath, out bundle)) {
+                _bundleProvider.Add(virtualPath, _bundleProvider.CreateScriptBundle());
 
-                if (!bundleProvider.Get(virtualPath, out bundle)) {
+                if (!_bundleProvider.Get(virtualPath, out bundle)) {
                     throw new Exception($"Failed to create bundle. ({virtualPath})");
                 }
             }
-            
+
             bundle.AddFile(scriptFile);
         }
 
-        public static void AddCssFile(RequestContext requestContext, string cssFile) {
-            var virtualPath = ResolveDynamicVirtualPath(requestContext.RouteData, "Styles");
+        public void AddCssFile(string cssFile) {
+            var virtualPath = ResolveDynamicVirtualPath(_requestContext.RouteData, "Styles");
             if (virtualPath == null) { return; }
 
-            var bundleProvider = Bundler.Current;
-
             IBundle bundle;
-            if (!bundleProvider.Get(virtualPath, out bundle)) {
-                bundleProvider.Add(virtualPath, bundleProvider.CreateCssBundle());
+            if (!_bundleProvider.Get(virtualPath, out bundle)) {
+                _bundleProvider.Add(virtualPath, _bundleProvider.CreateLessBundle());
 
-                if (!bundleProvider.Get(virtualPath, out bundle)) {
+                if (!_bundleProvider.Get(virtualPath, out bundle)) {
                     throw new Exception($"Failed to create bundle. ({virtualPath})");
                 }
             }

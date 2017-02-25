@@ -7,8 +7,8 @@ namespace Bundler {
     public class BundleResponse : IBundleResponse {
         private readonly Container _container;
 
-        public BundleResponse(string contentType, int version, DateTime lastModification, string content, Container _container) {
-            this._container = _container;
+        public BundleResponse(string contentType, int version, DateTime lastModification, string content, Container container) {
+            _container = container;
             ContentType = contentType;
             Version = version;
             LastModification = lastModification;
@@ -20,7 +20,7 @@ namespace Bundler {
         public DateTime LastModification { get; }
         public string Content { get; }
 
-        public string[] BundleFiles => _container.GetFiles().ToArray();
-        public string GetFile(string virtualFile) => _container.GetFile(virtualFile);
+        public string[] Files => _container.GetFiles().ToArray();
+        public string GetFileContent(string virtualFile) => _container.GetFile(virtualFile);
     }
 }

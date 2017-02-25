@@ -7,11 +7,15 @@ namespace Bundler {
         public const string IfModifiedSinceHeader = "If-Modified-Since";
 
         private readonly IBundle _bundle;
+        private readonly int _requestVersion;
+        private readonly string _requestFile;
 
         public bool IsReusable { get; } = false;
 
-        public BundlerHandler(IBundle bundle) {
+        public BundlerHandler(IBundle bundle, int requestVersion, string requestFile) {
             _bundle = bundle;
+            _requestVersion = requestVersion;
+            _requestFile = requestFile;
         }
         
         public void ProcessRequest(HttpContext context) {
@@ -27,10 +31,9 @@ namespace Bundler {
             }
 
             context.Response.ContentType = bundleResponse.ContentType;
-
-            var fQuery = context.Request.QueryString["f"];
-            if (!string.IsNullOrWhiteSpace(fQuery)) {
-                var content = bundleResponse.GetFile(fQuery);
+            
+            if (!string.IsNullOrWhiteSpace(_requestFile)) {
+                var content = bundleResponse.GetFileContent(_requestFile);
                 if (content == null) {
                     context.Response.StatusCode = 404;
                     return;
