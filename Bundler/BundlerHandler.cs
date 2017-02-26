@@ -33,13 +33,13 @@ namespace Bundler {
             context.Response.ContentType = bundleResponse.ContentType;
             
             if (!string.IsNullOrWhiteSpace(_requestFile)) {
-                var content = bundleResponse.GetFileContent(_requestFile);
-                if (content == null) {
+                IBundleFile file;
+                if (!bundleResponse.Files.TryGetValue(_requestFile, out file)) {
                     context.Response.StatusCode = 404;
                     return;
                 }
-                
-                context.Response.Write(content);
+
+                context.Response.Write(file.Content);
             } else {
                 context.Response.Write(bundleResponse.Content);
             }

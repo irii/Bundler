@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Bundler.Infrastructure {
     public interface IBundleResponse {
@@ -23,15 +24,8 @@ namespace Bundler.Infrastructure {
         string Content { get; }
 
         /// <summary>
-        /// Array of inlcude files in this bundle.
+        /// List of all Files
         /// </summary>
-        string[] Files { get; }
-
-        /// <summary>
-        /// Returns a the content of the requested file.
-        /// </summary>
-        /// <param name="virtualFile"></param>
-        /// <returns></returns>
-        string GetFileContent(string virtualFile);
+        IReadOnlyDictionary<string, IBundleFile> Files { get; }
     }
 }

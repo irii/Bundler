@@ -62,6 +62,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BundleFile.cs" />
     <Compile Include="BundleProvider.cs" />
     <Compile Include="Bundler.cs" />
     <Compile Include="BundleResponse.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Bundle.cs" />
     <Compile Include="Infrastructure\IBundle.cs" />
+    <Compile Include="Infrastructure\IBundleFile.cs" />
     <Compile Include="Infrastructure\IBundleProvider.cs" />
     <Compile Include="Infrastructure\IBundleContext.cs" />
     <Compile Include="Infrastructure\IBundleResponse.cs" />

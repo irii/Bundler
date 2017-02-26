@@ -89,12 +89,7 @@ namespace Bundler {
 
             var sB = new StringBuilder();
             foreach (var file in response.Files) {
-                var content = response.GetFileContent(file);
-                if (content == null) {
-                    continue;
-                }
-
-                sB.AppendLine(string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + response.Version + "&f=" + Uri.EscapeDataString(file)));
+                sB.AppendLine(string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + file.Value.Version + "&f=" + Uri.EscapeDataString(file.Value.VirtualFile)));
             }
 
             return sB.ToString();

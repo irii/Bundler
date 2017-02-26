@@ -14,7 +14,10 @@ namespace Bundler.Example {
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            var bundleContext = new DefaultBundleContext(this);
+            var bundleContext = new DefaultBundleContext(this) {
+                BundleFiles = true,
+                Optimization = true
+            };
             var bundleProvider = new BundleProvider(bundleContext);
 
             Bundler.Current = bundleProvider;
