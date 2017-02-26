@@ -1,4 +1,6 @@
-﻿namespace Bundler.Infrastructure {
+﻿using System;
+
+namespace Bundler.Infrastructure {
     public interface IBundleFile {
         /// <summary>
         /// Virtual file
@@ -14,5 +16,7 @@
         /// Transformed content
         /// </summary>
         string Content { get; }
+
+        DateTime LastModification { get; }
     }
 }

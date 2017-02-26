@@ -40,7 +40,7 @@ namespace Bundler.Internals {
                     : string.Concat(_current.Item1, _placeholder, transformedContent);
 
                 var dictionary = CreateDictionary(_current.Item4);
-                dictionary.Add(virtualFile, new BundleFile(virtualFile, transformedContent.GetHashCode(), transformedContent));
+                dictionary.Add(virtualFile, new BundleFile(virtualFile, transformedContent.GetHashCode(), transformedContent, DateTime.Now));
                 
                 var @new = new Tuple<string, int, DateTime, Dictionary<string, IBundleFile>>(newContent, newContent.GetHashCode(), DateTime.Now, dictionary);
 

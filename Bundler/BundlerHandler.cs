@@ -22,16 +22,17 @@ namespace Bundler {
             var bundleResponse = _bundle.GetResponse();
 
             if (_bundle.Context.Cache) {
-                DateTime lastModification;
+                DateTime requestLastModification;
                 var lastModificationRaw = context.Request.Headers[IfModifiedSinceHeader];
-                if (!string.IsNullOrWhiteSpace(lastModificationRaw) && DateTime.TryParse(lastModificationRaw, out lastModification) && lastModification > bundleResponse.LastModification) {
+                if (!string.IsNullOrWhiteSpace(lastModificationRaw) && DateTime.TryParse(lastModificationRaw, out requestLastModification) && requestLastModification > bundleResponse.LastModification) {
                     context.Response.StatusCode = 304;
                     return;
                 }
             }
 
             context.Response.ContentType = bundleResponse.ContentType;
-            
+
+            DateTime responseLastModification;
             if (!string.IsNullOrWhiteSpace(_requestFile)) {
                 IBundleFile file;
                 if (!bundleResponse.Files.TryGetValue(_requestFile, out file)) {
@@ -39,8 +40,10 @@ namespace Bundler {
                     return;
                 }
 
+                responseLastModification = file.LastModification;
                 context.Response.Write(file.Content);
             } else {
+                responseLastModification = bundleResponse.LastModification;
                 context.Response.Write(bundleResponse.Content);
             }
 
@@ -48,7 +51,7 @@ namespace Bundler {
 
             if (_bundle.Context.Cache) {
                 context.Response.Cache.SetCacheability(HttpCacheability.Private);
-                context.Response.Cache.SetLastModified(bundleResponse.LastModification);
+                context.Response.Cache.SetLastModified(responseLastModification);
                 context.Response.Cache.SetExpires(DateTime.Now.Add(_bundle.Context.CacheDuration));
             }
         }
