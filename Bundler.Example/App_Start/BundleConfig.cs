@@ -5,7 +5,7 @@ using Bundler.JavaScript;
 using Bundler.Less;
 
 namespace Bundler.Example {
-    public class BundleConfig {
+    public static class BundleConfig {
         public const string ApplicationScriptsBundleKey = "~/Scripts/Application";
         public const string ApplicationStylesBundleKey = "~/Styles/Application";
 
@@ -13,7 +13,7 @@ namespace Bundler.Example {
         public static IBundle StyleBundle { get; private set; }
 
         public static void SetupBundler(IBundleProvider bundleProvider) {
-            ScriptBundle = bundleProvider.CreateScriptBundle();
+            ScriptBundle = bundleProvider.CreateScriptBundle(async: false);
             StyleBundle = bundleProvider.CreateLessBundle();
 
             if (!bundleProvider.Add(ApplicationScriptsBundleKey, ScriptBundle)) {
