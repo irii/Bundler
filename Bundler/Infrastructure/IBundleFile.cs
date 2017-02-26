@@ -17,6 +17,9 @@ namespace Bundler.Infrastructure {
         /// </summary>
         string Content { get; }
 
+        /// <summary>
+        /// LastModification
+        /// </summary>
         DateTime LastModification { get; }
     }
 }
