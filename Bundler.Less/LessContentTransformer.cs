@@ -14,7 +14,7 @@ namespace Bundler.Less {
 
             outputContent = dotless.Core.Less.Parse(inputContent, new DotlessConfiguration {
                 MinifyOutput = bundleContext.Optimization,
-                RootPath = bundleContext.GetFullPath("~/")
+                RootPath = "~/",
             }) ?? string.Empty;
 
             return !string.IsNullOrWhiteSpace(outputContent);

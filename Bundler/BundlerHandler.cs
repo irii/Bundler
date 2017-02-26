@@ -47,6 +47,7 @@ namespace Bundler {
             context.Response.StatusCode = 200;
 
             if (_bundle.Context.Cache) {
+                context.Response.Cache.SetCacheability(HttpCacheability.Private);
                 context.Response.Cache.SetLastModified(bundleResponse.LastModification);
                 context.Response.Cache.SetExpires(DateTime.Now.Add(_bundle.Context.CacheDuration));
             }
