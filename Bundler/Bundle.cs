@@ -21,11 +21,11 @@ namespace Bundler {
 
             _container = new Container(placeholder);
         }
-        
-        protected virtual string ProcessContent(string content) {
-            return ContentTransformers.Any(t => !t.Process(Context, content, out content)) ? null : content;
+
+        protected virtual bool ProcessContent(IFileContent fileContent) {
+            return ContentTransformers.All(t => t.Process(Context, fileContent));
         }
-        
+
         public bool Include(string virtualFile, string content) {
             if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
             if (content == null) throw new ArgumentNullException(nameof(content));
@@ -34,21 +34,33 @@ namespace Bundler {
                 return true;
             }
 
-            var transformedContent = ProcessContent(content);
-            if (transformedContent == null) {
+            var fileContent = new FileContent(virtualFile, content);
+            var processResult = ProcessContent(fileContent);
+            if (!processResult) {
                 if (!Context.FallbackOnError) {
                     return false;
                 }
 
-                transformedContent = content;
+                _container.Append(virtualFile, content);
+                return true;
             }
-            
-            _container.Append(virtualFile, transformedContent);
+
+            _container.Append(virtualFile, fileContent.Content);
             return true;
         }
 
         public IBundleResponse GetResponse() {
             return new BundleResponse(ContentType, _container.Version, _container.LastModification, _container.Content, _container.GetFiles());
+        }
+
+        private class FileContent : IFileContent {
+            public FileContent(string virtualFile, string inputContent) {
+                VirtualFile = virtualFile;
+                Content = inputContent;
+            }
+
+            public string VirtualFile { get; }
+            public string Content { get; set; }
         }
     }
 }

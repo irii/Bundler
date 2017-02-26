@@ -6,19 +6,19 @@ namespace Bundler.JavaScript {
     public class JavaScriptContentTransformer : IContentTransformer {
         void IDisposable.Dispose() { }
 
-        bool IContentTransformer.Process(IBundleContext bundleContext, string inputContent, out string outputContent) {
-            if (!bundleContext.Optimization || string.IsNullOrWhiteSpace(inputContent)) {
-                outputContent = inputContent?.Trim() ?? string.Empty;
+        bool IContentTransformer.Process(IBundleContext bundleContext, IFileContent fileContent) {
+            if (!bundleContext.Optimization || string.IsNullOrWhiteSpace(fileContent.Content)) {
+                fileContent.Content = fileContent.Content.Trim();
                 return true;
             }
 
             var minifier = new Minifier();
-            outputContent = minifier.MinifyJavaScript(inputContent, new CodeSettings() {
+            fileContent.Content = minifier.MinifyJavaScript(fileContent.Content, new CodeSettings() {
                 EvalTreatment = EvalTreatment.MakeImmediateSafe,
                 PreserveImportantComments = false
             })?.Trim() ?? string.Empty;
 
-            return minifier.ErrorList.Count == 0 && !string.IsNullOrWhiteSpace(outputContent);
+            return minifier.ErrorList.Count == 0 && !string.IsNullOrWhiteSpace(fileContent.Content);
         }
     }
 }
