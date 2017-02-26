@@ -47,7 +47,7 @@ namespace Bundler {
             return true;
         }
 
-        public virtual IBundleResponse GetResponse() {
+        public IBundleResponse GetResponse() {
             return new BundleResponse(ContentType, _container.Version, _container.LastModification, _container.Content, _container.GetFiles());
         }
     }
