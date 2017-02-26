@@ -4,7 +4,7 @@ using System.Threading;
 using Bundler.Infrastructure;
 
 namespace Bundler.Internals {
-    public sealed class Container {
+    internal sealed class Container {
         private readonly string _placeholder;
         private readonly object _writeLock = new object();
 
@@ -23,9 +23,8 @@ namespace Bundler.Internals {
         }
 
         public void Append(string virtualFile, string transformedContent) {
-            if (string.IsNullOrWhiteSpace(transformedContent)) {
-                return;
-            }
+            if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
+            if (transformedContent == null) throw new ArgumentNullException(nameof(transformedContent));
 
             if (_current.Item4.ContainsKey(virtualFile)) {
                 return;
