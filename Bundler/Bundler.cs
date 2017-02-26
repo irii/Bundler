@@ -1,6 +1,4 @@
 ﻿using System.Threading;
-using System.Web;
-using System.Web.Mvc;
 using Bundler.Infrastructure;
 
 namespace Bundler {
@@ -10,6 +8,9 @@ namespace Bundler {
         private static readonly object WriteLock = new object();
         private static IBundleProvider _currentBundleProvider;
 
+        /// <summary>
+        /// Current BundleProvider
+        /// </summary>
         public static IBundleProvider Current {
             get { return _currentBundleProvider ?? DefaultBundleProvider; }
             set {
@@ -17,10 +18,6 @@ namespace Bundler {
                     Interlocked.Exchange(ref _currentBundleProvider, value);
                 }
             }
-        }
-
-        public static IHtmlString Render(string virtualPath) {
-            return new MvcHtmlString(Current.Render(virtualPath));
         }
     }
 }

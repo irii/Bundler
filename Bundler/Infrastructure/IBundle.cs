@@ -1,5 +1,8 @@
 ﻿namespace Bundler.Infrastructure {
     public interface IBundle {
+        /// <summary>
+        /// Used format for rendering
+        /// </summary>
         string TagFormat { get; }
 
         /// <summary>
