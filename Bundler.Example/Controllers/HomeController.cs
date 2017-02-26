@@ -1,7 +1,8 @@
 ﻿using System.Web.Mvc;
+using Bundler.Example.Application;
 
 namespace Bundler.Example.Controllers {
-    public class HomeController : Controller {
+    public class HomeController : ExampleController {
         public ActionResult Index() {
             return View();
         }

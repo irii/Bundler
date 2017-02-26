@@ -7,7 +7,7 @@ using Bundler.Infrastructure;
 using Bundler.JavaScript;
 using Bundler.Less;
 
-namespace Bundler.Example {
+namespace Bundler.Example.Application {
     public class BundleManager {
         private readonly IBundleProvider _bundleProvider;
         private readonly RequestContext _requestContext;
