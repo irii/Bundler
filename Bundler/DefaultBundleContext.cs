@@ -4,14 +4,9 @@ using Bundler.Infrastructure;
 
 namespace Bundler {
     public class DefaultBundleContext : IBundleContext {
-        private readonly HttpApplication _httpApplication;
-        public DefaultBundleContext() : this(HttpContext.Current.ApplicationInstance) { }
+        private static HttpApplication HttpApplication => HttpContext.Current.ApplicationInstance;
 
-        public DefaultBundleContext(HttpApplication httpApplication) {
-            _httpApplication = httpApplication;
-        }
-
-        public string GetFullPath(string virtualPath) => _httpApplication.Server.MapPath(virtualPath);
+        public string GetFullPath(string virtualPath) => HttpApplication.Server.MapPath(virtualPath);
 
         public bool Optimization { get; set; }
         public bool Cache { get; set; }

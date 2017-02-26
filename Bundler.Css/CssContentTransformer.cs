@@ -14,7 +14,7 @@ namespace Bundler.Css {
 
             var minifier = new Minifier();
             outputContent = minifier.MinifyStyleSheet(inputContent, new CssSettings { CommentMode = CssComment.None })?.Trim() ?? string.Empty;
-            return true;
+            return minifier.ErrorList.Count == 0 && !string.IsNullOrWhiteSpace(outputContent);
         }
     }
 }

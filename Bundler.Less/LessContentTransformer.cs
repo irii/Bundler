@@ -13,10 +13,11 @@ namespace Bundler.Less {
             }
 
             outputContent = dotless.Core.Less.Parse(inputContent, new DotlessConfiguration {
-                MinifyOutput = bundleContext.Optimization
+                MinifyOutput = bundleContext.Optimization,
+                RootPath = bundleContext.GetFullPath("~/")
             }) ?? string.Empty;
 
-            return true;
+            return !string.IsNullOrWhiteSpace(outputContent);
         }
     }
 }

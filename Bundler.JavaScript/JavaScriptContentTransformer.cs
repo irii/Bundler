@@ -18,7 +18,7 @@ namespace Bundler.JavaScript {
                 PreserveImportantComments = false
             })?.Trim() ?? string.Empty;
 
-            return true;
+            return minifier.ErrorList.Count == 0 && !string.IsNullOrWhiteSpace(outputContent);
         }
     }
 }
