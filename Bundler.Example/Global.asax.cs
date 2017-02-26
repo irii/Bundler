@@ -16,7 +16,8 @@ namespace Bundler.Example {
 
             var bundleContext = new DefaultBundleContext() {
                 BundleFiles = true,
-                Optimization = true
+                Optimization = true,
+                Cache = true
             };
             var bundleProvider = new BundleProvider(bundleContext);
 

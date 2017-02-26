@@ -21,29 +21,32 @@ namespace Bundler {
         public void ProcessRequest(HttpContext context) {
             var bundleResponse = _bundle.GetResponse();
 
+            var isFileRequest = !string.IsNullOrWhiteSpace(_requestFile);
+
+            IBundleFile file = null;
+            if (isFileRequest && !bundleResponse.Files.TryGetValue(_requestFile, out file)) {
+                context.Response.StatusCode = 404;
+                return;
+            }
+            
             if (_bundle.Context.Cache) {
+                var lastModification = isFileRequest 
+                    ? file.LastModification 
+                    : bundleResponse.LastModification;
+
                 DateTime requestLastModification;
                 var lastModificationRaw = context.Request.Headers[IfModifiedSinceHeader];
-                if (!string.IsNullOrWhiteSpace(lastModificationRaw) && DateTime.TryParse(lastModificationRaw, out requestLastModification) && requestLastModification > bundleResponse.LastModification) {
+                if (!string.IsNullOrWhiteSpace(lastModificationRaw) && DateTime.TryParse(lastModificationRaw, out requestLastModification) && requestLastModification > lastModification) {
                     context.Response.StatusCode = 304;
                     return;
                 }
             }
 
             context.Response.ContentType = bundleResponse.ContentType;
-
-            DateTime responseLastModification;
-            if (!string.IsNullOrWhiteSpace(_requestFile)) {
-                IBundleFile file;
-                if (!bundleResponse.Files.TryGetValue(_requestFile, out file)) {
-                    context.Response.StatusCode = 404;
-                    return;
-                }
-
-                responseLastModification = file.LastModification;
+            
+            if (isFileRequest) {
                 context.Response.Write(file.Content);
             } else {
-                responseLastModification = bundleResponse.LastModification;
                 context.Response.Write(bundleResponse.Content);
             }
 
@@ -51,7 +54,7 @@ namespace Bundler {
 
             if (_bundle.Context.Cache) {
                 context.Response.Cache.SetCacheability(HttpCacheability.Private);
-                context.Response.Cache.SetLastModified(responseLastModification);
+                context.Response.Cache.SetLastModified(DateTime.Now);
                 context.Response.Cache.SetExpires(DateTime.Now.Add(_bundle.Context.CacheDuration));
             }
         }
