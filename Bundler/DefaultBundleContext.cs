@@ -13,5 +13,6 @@ namespace Bundler {
         public bool FallbackOnError { get; set; }
         public bool BundleFiles { get; set; }
         public TimeSpan CacheDuration { get; set; }
+        public bool ETag { get; set; }
     }
 }

@@ -43,9 +43,8 @@ namespace Bundler.Infrastructure {
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="bundle"></param>
-        /// <param name="requestVersion"></param>
         /// <param name="requestFile"></param>
         /// <returns></returns>
-        bool ResolveUri(Uri uri, out IBundle bundle, out int requestVersion, out string requestFile);
+        bool ResolveUri(Uri uri, out IBundle bundle, out string requestFile);
     }
 }

@@ -13,6 +13,11 @@ namespace Bundler.Infrastructure {
         bool Cache { get; }
 
         /// <summary>
+        /// Append ETag
+        /// </summary>
+        bool ETag { get; }
+
+        /// <summary>
         /// Server cache duration
         /// </summary>
         TimeSpan CacheDuration { get; }

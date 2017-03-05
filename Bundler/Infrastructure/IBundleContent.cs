@@ -1,16 +1,12 @@
 ﻿using System;
 
 namespace Bundler.Infrastructure {
-    public interface IBundleFile {
-        /// <summary>
-        /// Virtual file
-        /// </summary>
-        string VirtualFile { get; }
+    public interface IBundleContent {
 
         /// <summary>
-        /// Version
+        /// Hash
         /// </summary>
-        int Version { get; }
+        string ContentHash { get; }
 
         /// <summary>
         /// Transformed content
@@ -21,5 +17,6 @@ namespace Bundler.Infrastructure {
         /// LastModification
         /// </summary>
         DateTime LastModification { get; }
+
     }
 }

@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using Bundler.Infrastructure;
 
@@ -8,7 +10,7 @@ namespace Bundler.Internals {
         private readonly string _placeholder;
         private readonly object _writeLock = new object();
 
-        private Tuple<string, int, DateTime, Dictionary<string, IBundleFile>> _current = new Tuple<string, int, DateTime, Dictionary<string, IBundleFile>>(string.Empty, string.Empty.GetHashCode(), DateTime.Now, CreateDictionary(new Dictionary<string, IBundleFile>(0)));
+        private Tuple<string, string, DateTime, Dictionary<string, IBundleContent>> _current = new Tuple<string, string, DateTime, Dictionary<string, IBundleContent>>(string.Empty, string.Empty.GetHashCode().ToString(), DateTime.Now, CreateDictionary(new Dictionary<string, IBundleContent>(0)));
 
         public Container(string placeholder) {
             _placeholder = placeholder;
@@ -17,8 +19,8 @@ namespace Bundler.Internals {
         public bool Exists(string identifier) {
             return _current.Item4.ContainsKey(identifier);
         }
-        
-        public IReadOnlyDictionary<string, IBundleFile> GetFiles() {
+
+        public IReadOnlyDictionary<string, IBundleContent> GetFiles() {
             return _current.Item4;
         }
 
@@ -40,9 +42,9 @@ namespace Bundler.Internals {
                     : string.Concat(_current.Item1, _placeholder, transformedContent);
 
                 var dictionary = CreateDictionary(_current.Item4);
-                dictionary.Add(virtualFile, new BundleFile(virtualFile, transformedContent.GetHashCode(), transformedContent, DateTime.Now));
-                
-                var @new = new Tuple<string, int, DateTime, Dictionary<string, IBundleFile>>(newContent, newContent.GetHashCode(), DateTime.Now, dictionary);
+                dictionary.Add(virtualFile, new BundleFile(virtualFile, GetContentHash(transformedContent), transformedContent, DateTime.Now));
+
+                var @new = new Tuple<string, string, DateTime, Dictionary<string, IBundleContent>>(newContent, GetContentHash(newContent), DateTime.Now, dictionary);
 
                 Interlocked.Exchange(ref _current, @new);
             }
@@ -50,11 +52,16 @@ namespace Bundler.Internals {
 
         public string Content => _current.Item1;
         public DateTime LastModification => _current.Item3;
-        public int Version => _current.Item2;
+        public string ContentHash => _current.Item2;
 
 
-        private static Dictionary<string, IBundleFile> CreateDictionary(IDictionary<string, IBundleFile> values) {
-            return new Dictionary<string, IBundleFile>(values, StringComparer.InvariantCultureIgnoreCase);
+        private static Dictionary<string, IBundleContent> CreateDictionary(IDictionary<string, IBundleContent> values) {
+            return new Dictionary<string, IBundleContent>(values, StringComparer.InvariantCultureIgnoreCase);
+        }
+
+        private static string GetContentHash(string input) {
+            // TODO: Check for collisions
+            return input.GetHashCode().ToString();
         }
     }
 }

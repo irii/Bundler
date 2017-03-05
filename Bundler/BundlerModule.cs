@@ -31,12 +31,11 @@ namespace Bundler {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void TryRemapHandler(HttpApplication app, IBundleProvider provider) {
-            int requestVersion;
             string requestFile;
 
             IBundle bundle;
-            if (provider.ResolveUri(app.Request.Url, out bundle, out requestVersion, out requestFile)) {
-                app.Context.RemapHandler(new BundlerHandler(bundle, requestVersion, requestFile));
+            if (provider.ResolveUri(app.Request.Url, out bundle, out requestFile)) {
+                app.Context.RemapHandler(new BundlerHandler(bundle, requestFile));
             }
         }
 

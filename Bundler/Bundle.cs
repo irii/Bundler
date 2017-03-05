@@ -50,7 +50,7 @@ namespace Bundler {
         }
 
         public IBundleResponse GetResponse() {
-            return new BundleResponse(ContentType, _container.Version, _container.LastModification, _container.Content, _container.GetFiles());
+            return new BundleResponse(ContentType, _container.ContentHash, _container.LastModification, _container.Content, _container.GetFiles());
         }
 
         private class FileContent : IFileContent {

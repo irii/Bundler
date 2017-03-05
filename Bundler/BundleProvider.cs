@@ -58,18 +58,15 @@ namespace Bundler {
             return _currentBundleMappings.Paths.ContainsKey(PrepareVirtualPath(virtualPath));
         }
 
-        public bool ResolveUri(Uri uri, out IBundle bundle, out int requestVersion, out string requestFile) {
+        public bool ResolveUri(Uri uri, out IBundle bundle, out string requestFile) {
             if (!Get(uri.AbsolutePath, out bundle)) {
-                requestVersion = 0;
                 requestFile = null;
                 return false;
             }
 
             var queryArgs = HttpUtility.ParseQueryString(uri.Query);
-            var vArg = queryArgs["v"]?.Trim();
             var fArg = queryArgs["f"]?.Trim();
 
-            int.TryParse(vArg, out requestVersion);
             requestFile = string.IsNullOrWhiteSpace(fArg) ? null : fArg;
 
             return true;
@@ -84,12 +81,12 @@ namespace Bundler {
             var response = bundle.GetResponse();
 
             if (bundle.Context.BundleFiles) {
-                return string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + response.Version);
+                return string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath));
             }
 
             var sB = new StringBuilder();
             foreach (var file in response.Files) {
-                sB.AppendLine(string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?v=" + file.Value.Version + "&f=" + Uri.EscapeDataString(file.Value.VirtualFile)));
+                sB.AppendLine(string.Format(bundle.TagFormat, VirtualPathUtility.ToAbsolute(virtualPath) + "?f=" + Uri.EscapeDataString(file.Key)));
             }
 
             return sB.ToString();

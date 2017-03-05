@@ -2,16 +2,16 @@
 using Bundler.Infrastructure;
 
 namespace Bundler {
-    public class BundleFile : IBundleFile {
-        public BundleFile(string virtualFile, int version, string content, DateTime lastModification) {
+    public class BundleFile : IBundleContent {
+        public BundleFile(string virtualFile, string contentHash, string content, DateTime lastModification) {
             VirtualFile = virtualFile;
-            Version = version;
+            ContentHash = contentHash;
             Content = content;
             LastModification = lastModification;
         }
 
         public string VirtualFile { get; }
-        public int Version { get; }
+        public string ContentHash { get; }
         public string Content { get; }
         public DateTime LastModification { get; }
     }
