@@ -1,6 +1,11 @@
 ﻿using System;
+using System.IO;
 using Bundler.Infrastructure;
+using dotless.Core;
 using dotless.Core.configuration;
+using dotless.Core.Input;
+using dotless.Core.Parser;
+using Pandora.Fluent;
 
 namespace Bundler.Less {
     public class LessContentTransformer : IContentTransformer {
@@ -12,12 +17,28 @@ namespace Bundler.Less {
                 return true;
             }
 
-            fileContent.Content = dotless.Core.Less.Parse(fileContent.Content, new DotlessConfiguration {
+            var configuration = new DotlessConfiguration {
                 MinifyOutput = bundleContext.Optimization,
-                RootPath = "~/",
-            }) ?? string.Empty;
+                MapPathsToWeb = false,
+                DisableParameters = false,
+                RootPath = bundleContext.GetFullPath(Path.GetDirectoryName(fileContent.VirtualFile))
+            };
 
-            return !string.IsNullOrWhiteSpace(fileContent.Content);
+            var lessEngine = new EngineFactory(configuration).GetEngine();
+            lessEngine.CurrentDirectory = configuration.RootPath;
+
+            try {
+                fileContent.Content = lessEngine.TransformToCss(fileContent.Content, null) ?? string.Empty;
+                return true;
+            }
+            catch (Exception) {
+                fileContent.Content = $"/* Error while parsing LESS/CSS source '{fileContent.VirtualFile}' */";
+                if (bundleContext.FallbackOnError) {
+                    fileContent.Content += Environment.NewLine + fileContent.Content;
+                }
+            }
+
+            return false;
         }
     }
 }
