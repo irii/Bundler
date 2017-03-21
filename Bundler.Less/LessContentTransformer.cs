@@ -27,12 +27,9 @@ namespace Bundler.Less {
             try {
                 fileContent.Content = lessEngine.TransformToCss(fileContent.Content, null) ?? string.Empty;
                 return true;
+            } catch (Exception) {
+                return false;
             }
-            catch (Exception) {
-                fileContent.Content = $"/* Error while parsing LESS/CSS source '{fileContent.VirtualFile}' */" + Environment.NewLine;
-            }
-
-            return false;
         }
     }
 }
