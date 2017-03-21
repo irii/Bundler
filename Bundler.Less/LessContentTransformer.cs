@@ -29,10 +29,7 @@ namespace Bundler.Less {
                 return true;
             }
             catch (Exception) {
-                fileContent.Content = $"/* Error while parsing LESS/CSS source '{fileContent.VirtualFile}' */";
-                if (bundleContext.FallbackOnError) {
-                    fileContent.Content += Environment.NewLine + fileContent.Content;
-                }
+                fileContent.Content = $"/* Error while parsing LESS/CSS source '{fileContent.VirtualFile}' */" + Environment.NewLine;
             }
 
             return false;
