@@ -3,9 +3,6 @@ using System.IO;
 using Bundler.Infrastructure;
 using dotless.Core;
 using dotless.Core.configuration;
-using dotless.Core.Input;
-using dotless.Core.Parser;
-using Pandora.Fluent;
 
 namespace Bundler.Less {
     public class LessContentTransformer : IContentTransformer {
