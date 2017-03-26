@@ -6,8 +6,8 @@ namespace Bundler.JavaScript {
     public class JavaScriptContentTransformer : IContentTransformer {
         void IDisposable.Dispose() { }
 
-        bool IContentTransformer.Process(IBundleContext bundleContext, IFileContent fileContent) {
-            if (!bundleContext.Optimization || string.IsNullOrWhiteSpace(fileContent.Content)) {
+        bool IContentTransformer.Process(IBundle bundle, IFileContent fileContent) {
+            if (!bundle.Context.Optimization || string.IsNullOrWhiteSpace(fileContent.Content)) {
                 fileContent.Content = fileContent.Content.Trim();
                 return true;
             }

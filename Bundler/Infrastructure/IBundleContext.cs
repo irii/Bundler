@@ -1,7 +1,12 @@
 ﻿using System;
 
 namespace Bundler.Infrastructure {
-    public interface IBundleContext {
+    public interface IBundleContext : IDisposable {
+        /// <summary>
+        /// Virtual Path Provider
+        /// </summary>
+        IBundleVirtualPathProvider VirtualPathProvider { get; }
+
         /// <summary>
         /// Optimization
         /// </summary>
@@ -33,10 +38,8 @@ namespace Bundler.Infrastructure {
         bool BundleFiles { get; }
 
         /// <summary>
-        /// Returns the full path of a virtual file
+        /// Refresh bundle on source content change.
         /// </summary>
-        /// <param name="virtualPath"></param>
-        /// <returns></returns>
-        string GetFullPath(string virtualPath);
+        bool AutoRefresh { get; }
     }
 }

@@ -1,5 +1,7 @@
-﻿namespace Bundler.Infrastructure {
-    public interface IBundle {
+﻿using System;
+
+namespace Bundler.Infrastructure {
+    public interface IBundle : IDisposable {
         /// <summary>
         /// Used format for rendering
         /// </summary>
@@ -19,9 +21,18 @@
         /// <summary>
         /// Includes a new file to the Bundle
         /// </summary>
-        /// <param name="virtualFile"></param>
-        /// <param name="content"></param>
+        /// <param name="contentSource"></param>
         /// <returns></returns>
-        bool Include(string virtualFile, string content);
+        bool Include(IContentSource contentSource);
+
+        /// <summary>
+        /// Refreshes the bundle.
+        /// </summary>
+        bool Refresh();
+
+        /// <summary>
+        /// Handler callback for custom dependencies.
+        /// </summary>
+        FileChangedDelegate ChangeHandler { get; }
     }
 }

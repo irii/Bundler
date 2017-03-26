@@ -173,6 +173,10 @@
     <Content Include="Scripts\jquery-1.10.2.min.map" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Bundler.AspNet\Bundler.AspNet.csproj">
+      <Project>{aa5e8396-3cbc-4b29-b9ba-439ac01e2ddf}</Project>
+      <Name>Bundler.AspNet</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Bundler.Css\Bundler.Css.csproj">
       <Project>{97120a2a-6d7d-4266-8543-c9acc67608f2}</Project>
       <Name>Bundler.Css</Name>

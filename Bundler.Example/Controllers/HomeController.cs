@@ -16,5 +16,13 @@ namespace Bundler.Example.Controllers {
             ViewBag.Message = "Your contact page.";
             return View();
         }
+
+        public ActionResult Refresh() {
+            foreach (var bundle in Bundler.Current.GetBundles()) {
+                bundle.Refresh();
+            }
+
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System;
 using System.IO;
-using System.Web;
+using Bundler.ContentSources;
 using Bundler.Infrastructure;
 
 namespace Bundler.Helper {
@@ -10,8 +10,9 @@ namespace Bundler.Helper {
         /// </summary>
         /// <param name="bundle"></param>
         /// <param name="virtualFile"></param>
+        /// <param name="enableFileChangeListener"></param>
         /// <returns></returns>
-        public static IBundle AddFile(this IBundle bundle, string virtualFile) {
+        public static IBundle AddFile(this IBundle bundle, string virtualFile, bool enableFileChangeListener = true) {
             if (bundle == null) throw new ArgumentNullException(nameof(bundle));
             if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
 
@@ -19,14 +20,12 @@ namespace Bundler.Helper {
                 throw new ArgumentException("Path should be virtual!");
             }
 
-            var absoluteFilePath = HttpContext.Current.Server.MapPath(virtualFile);
-
-            if (!File.Exists(absoluteFilePath)) {
-                return bundle;
+            if (!bundle.Context.VirtualPathProvider.FileExists(virtualFile)) {
+                throw new FileNotFoundException("Can't find file", virtualFile);
             }
-
-            var fileContent = File.ReadAllText(absoluteFilePath);
-            bundle.Include(virtualFile, fileContent);
+            
+            var fileContent = new StreamSource(bundle.Context.VirtualPathProvider, virtualFile, enableFileChangeListener);
+            bundle.Include(fileContent);
             return bundle;
         }
     }

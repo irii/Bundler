@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26014.0
+VisualStudioVersion = 15.0.26228.4
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bundler", "Bundler\Bundler.csproj", "{F3A4811B-591D-4BA4-92FE-586FDA8D2A59}"
 EndProject
@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		LICENSE.txt = LICENSE.txt
 		Readme.md = Readme.md
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bundler.AspNet", "Bundler.AspNet\Bundler.AspNet.csproj", "{AA5E8396-3CBC-4B29-B9BA-439AC01E2DDF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +47,10 @@ Global
 		{BC7ECB5C-8076-4378-B47D-C6D39EF0DD13}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BC7ECB5C-8076-4378-B47D-C6D39EF0DD13}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BC7ECB5C-8076-4378-B47D-C6D39EF0DD13}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA5E8396-3CBC-4B29-B9BA-439AC01E2DDF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA5E8396-3CBC-4B29-B9BA-439AC01E2DDF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA5E8396-3CBC-4B29-B9BA-439AC01E2DDF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA5E8396-3CBC-4B29-B9BA-439AC01E2DDF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

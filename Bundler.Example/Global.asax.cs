@@ -1,5 +1,7 @@
-﻿using System.Web.Mvc;
+﻿using System.Web.Hosting;
+using System.Web.Mvc;
 using System.Web.Routing;
+using Bundler.AspNet;
 using Bundler.Infrastructure;
 
 namespace Bundler.Example {
@@ -14,11 +16,13 @@ namespace Bundler.Example {
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            var bundleContext = new DefaultBundleContext() {
+            var bundleContext = new AspNetBundleContext() {
                 BundleFiles = true,
                 Optimization = true,
-                Cache = true
+                Cache = true,
+                AutoRefresh = true
             };
+
             var bundleProvider = new BundleProvider(bundleContext);
 
             Bundler.Current = bundleProvider;

@@ -20,43 +20,79 @@ namespace Bundler {
             TagFormat = tagFormat;
 
             _container = new Container(placeholder);
+            ChangeHandler = path => Refresh();
         }
 
-        protected virtual bool ProcessContent(IFileContent fileContent) {
-            return ContentTransformers.All(t => t.Process(Context, fileContent));
+        private bool ProcessContent(IFileContent fileContent) {
+            return ContentTransformers.All(t => t.Process(this, fileContent));
         }
 
-        public bool Include(string virtualFile, string content) {
-            if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
-            if (content == null) throw new ArgumentNullException(nameof(content));
+        public bool Include(IContentSource contentSource) => IncludeInternal(contentSource, _container);
 
-            if (_container.Exists(virtualFile)) {
+        private bool IncludeInternal(IContentSource contentSource, Container container) {
+            if (contentSource == null) throw new ArgumentNullException(nameof(contentSource));
+            if (container == null) throw new ArgumentNullException(nameof(container));
+
+            if (container.Exists(contentSource.VirtualFile)) {
                 return true;
             }
 
-            var fileContent = new FileContent(virtualFile, content);
+            var fileContent = new FileContent(contentSource.VirtualFile, contentSource.Get());
+            if (fileContent.Content == null) {
+                return false;
+            }
+
+            var inputContent = fileContent.Content;
+
             var processResult = ProcessContent(fileContent);
             if (!processResult) {
                 if (!Context.FallbackOnError) {
                     return false;
                 }
 
-                _container.Append(virtualFile, content);
-                return true;
+            } else {
+                inputContent = fileContent.Content;
             }
 
-            _container.Append(virtualFile, fileContent.Content);
+            container.Append(contentSource, inputContent);
+
+            // Register for auto refresh
+            contentSource.OnSourceChanged += (sender, args) => {
+                if (Context.AutoRefresh) {
+                    Refresh();
+                }
+            };
+
             return true;
         }
 
-        public IBundleResponse GetResponse() {
-            return new BundleResponse(ContentType, _container.ContentHash, _container.LastModification, _container.Content, _container.GetFiles());
+
+        public bool Refresh() {
+            return _container.Refresh((current, newContainer) => {
+                foreach (var file in current.Files) {
+                    var source = current.Sources[file.Value];
+                    IncludeInternal(source, newContainer);
+                }
+
+                return true;
+            });
         }
 
+        public IBundleResponse GetResponse() {
+            return new BundleResponse(ContentType, _container.ContentHash, _container.LastModification, _container.Content, _container.Current.Files);
+        }
+
+        public void Dispose() {
+            // Make conatiner empty to lose all dependencies
+            _container.Refresh((tuple, container) => true);
+        }
+
+        public FileChangedDelegate ChangeHandler { get; }
+
         private class FileContent : IFileContent {
-            public FileContent(string virtualFile, string inputContent) {
+            public FileContent(string virtualFile, string content) {
                 VirtualFile = virtualFile;
-                Content = inputContent;
+                Content = content;
             }
 
             public string VirtualFile { get; }

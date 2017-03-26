@@ -1,62 +1,99 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Security.Cryptography;
-using System.Text;
+using System.Linq;
 using System.Threading;
 using Bundler.Infrastructure;
 
 namespace Bundler.Internals {
     internal sealed class Container {
+        public class ContainerTuple {
+            public ContainerTuple(string content, IReadOnlyDictionary<string, IBundleContent> files, IReadOnlyDictionary<IBundleContent, IContentSource> sources, string hash) {
+                Content = content;
+                Files = files;
+                Sources = sources;
+                Hash = hash;
+            }
+
+            public string Content { get; }
+            public IReadOnlyDictionary<string, IBundleContent> Files { get; }
+            public IReadOnlyDictionary<IBundleContent, IContentSource> Sources { get; }
+
+            public string Hash { get; }
+            public DateTime LastModification { get; } = DateTime.Now;
+
+
+            public static ContainerTuple Empty() => new ContainerTuple(string.Empty, new Dictionary<string, IBundleContent>(StringComparer.InvariantCultureIgnoreCase), new Dictionary<IBundleContent, IContentSource>(), GetContentHash(string.Empty));
+        }
+
         private readonly string _placeholder;
         private readonly object _writeLock = new object();
 
-        private Tuple<string, string, DateTime, Dictionary<string, IBundleContent>> _current = new Tuple<string, string, DateTime, Dictionary<string, IBundleContent>>(string.Empty, string.Empty.GetHashCode().ToString(), DateTime.Now, CreateDictionary(new Dictionary<string, IBundleContent>(0)));
+        private ContainerTuple _current = ContainerTuple.Empty();
 
         public Container(string placeholder) {
             _placeholder = placeholder;
         }
 
         public bool Exists(string identifier) {
-            return _current.Item4.ContainsKey(identifier);
+            return _current.Files.ContainsKey(identifier);
         }
 
-        public IReadOnlyDictionary<string, IBundleContent> GetFiles() {
-            return _current.Item4;
-        }
+        public ContainerTuple Current => _current;
 
-        public void Append(string virtualFile, string transformedContent) {
-            if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
+        public void Append(IContentSource contentSource, string transformedContent) {
+            if (contentSource == null) throw new ArgumentNullException(nameof(contentSource));
             if (transformedContent == null) throw new ArgumentNullException(nameof(transformedContent));
 
-            if (_current.Item4.ContainsKey(virtualFile)) {
+            if (_current.Files.ContainsKey(contentSource.VirtualFile)) {
                 return;
             }
 
             lock (_writeLock) {
-                if (_current.Item4.ContainsKey(virtualFile)) {
+                if (_current.Files.ContainsKey(contentSource.VirtualFile)) {
                     return;
                 }
 
-                var newContent = string.IsNullOrWhiteSpace(_current.Item1)
-                    ? string.Concat(_current.Item1, transformedContent)
-                    : string.Concat(_current.Item1, _placeholder, transformedContent);
+                var newContent = string.IsNullOrWhiteSpace(_current.Content)
+                    ? string.Concat(_current.Content, transformedContent)
+                    : string.Concat(_current.Content, _placeholder, transformedContent);
 
-                var dictionary = CreateDictionary(_current.Item4);
-                dictionary.Add(virtualFile, new BundleFile(virtualFile, GetContentHash(transformedContent), transformedContent, DateTime.Now));
+                var file = new BundleFile(contentSource.VirtualFile, GetContentHash(transformedContent),
+                    transformedContent, DateTime.Now);
 
-                var @new = new Tuple<string, string, DateTime, Dictionary<string, IBundleContent>>(newContent, GetContentHash(newContent), DateTime.Now, dictionary);
+                var dictionary = CreateDictionary(_current.Files);
+                dictionary.Add(contentSource.VirtualFile, file);
+
+                var sources = _current.Sources.ToDictionary(x => x.Key, y => y.Value);
+                sources.Add(file, contentSource);
+
+                var @new = new ContainerTuple(newContent, dictionary, sources, GetContentHash(newContent));
 
                 Interlocked.Exchange(ref _current, @new);
             }
         }
 
-        public string Content => _current.Item1;
-        public DateTime LastModification => _current.Item3;
-        public string ContentHash => _current.Item2;
+        public bool Refresh(Func<ContainerTuple, Container, bool> action) {
+            lock (_writeLock) {
+                var container = new Container(_placeholder);
+                if (!action(_current, container)) {
+                    // On error prevent bundle curroption.
+                    return false;
+                }
+
+                var tuple = container.Current;
+                Interlocked.Exchange(ref _current, tuple);
+                return true;
+            }
+        }
 
 
-        private static Dictionary<string, IBundleContent> CreateDictionary(IDictionary<string, IBundleContent> values) {
-            return new Dictionary<string, IBundleContent>(values, StringComparer.InvariantCultureIgnoreCase);
+        public string Content => _current.Content;
+        public DateTime LastModification => _current.LastModification;
+        public string ContentHash => _current.Hash;
+
+
+        private static Dictionary<string, IBundleContent> CreateDictionary(IReadOnlyDictionary<string, IBundleContent> values) {
+            return values.ToDictionary(x => x.Key, y => y.Value, StringComparer.InvariantCultureIgnoreCase);
         }
 
         private static string GetContentHash(string input) {

@@ -4,7 +4,6 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Bundler.Helper;
 using Bundler.Infrastructure;
-using Bundler.JavaScript;
 using Bundler.Less;
 
 namespace Bundler.Example.Application {
@@ -34,6 +33,19 @@ namespace Bundler.Example.Application {
             return $"~/Dynamic/{controller}/{action}/{additionalIdentifier}";
         }
 
+        private IBundle ResolveBundle(string virtualPath) {
+            IBundle bundle;
+            if (!_bundleProvider.Get(virtualPath, out bundle)) {
+                _bundleProvider.Add(virtualPath, _bundleProvider.CreateLessBundle());
+
+                if (!_bundleProvider.Get(virtualPath, out bundle)) {
+                    throw new Exception($"Failed to create bundle. ({virtualPath})");
+                }
+            }
+
+            return bundle;
+        }
+
         public IHtmlString RenderDynamicScripts() {
             var key = ResolveDynamicVirtualPath(_requestContext.RouteData, "Scripts");
             return key == null
@@ -52,16 +64,7 @@ namespace Bundler.Example.Application {
             var virtualPath = ResolveDynamicVirtualPath(_requestContext.RouteData, "Scripts");
             if (virtualPath == null) { return; }
 
-
-            IBundle bundle;
-            if (!_bundleProvider.Get(virtualPath, out bundle)) {
-                _bundleProvider.Add(virtualPath, _bundleProvider.CreateScriptBundle());
-
-                if (!_bundleProvider.Get(virtualPath, out bundle)) {
-                    throw new Exception($"Failed to create bundle. ({virtualPath})");
-                }
-            }
-
+            var bundle = ResolveBundle(virtualPath);
             bundle.AddFile(scriptFile);
         }
 
@@ -69,15 +72,7 @@ namespace Bundler.Example.Application {
             var virtualPath = ResolveDynamicVirtualPath(_requestContext.RouteData, "Styles");
             if (virtualPath == null) { return; }
 
-            IBundle bundle;
-            if (!_bundleProvider.Get(virtualPath, out bundle)) {
-                _bundleProvider.Add(virtualPath, _bundleProvider.CreateLessBundle());
-
-                if (!_bundleProvider.Get(virtualPath, out bundle)) {
-                    throw new Exception($"Failed to create bundle. ({virtualPath})");
-                }
-            }
-
+            var bundle = ResolveBundle(virtualPath);
             bundle.AddFile(cssFile);
         }
     }

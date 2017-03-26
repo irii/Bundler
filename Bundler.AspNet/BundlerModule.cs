@@ -2,7 +2,7 @@
 using System.Web;
 using Bundler.Infrastructure;
 
-namespace Bundler {
+namespace Bundler.AspNet {
     public sealed class BundlerModule : IHttpModule {
         private readonly IBundleProvider _bundleProvider;
         public BundlerModule() {}

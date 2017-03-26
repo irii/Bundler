@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Web;
@@ -111,6 +112,7 @@ namespace Bundler {
             return '~' + virtualPath;
         }
 
+        public IReadOnlyCollection<IBundle> GetBundles() => _currentBundleMappings.Paths.Values.ToList();
 
         private class BundleMappings {
             private static readonly IEqualityComparer<string> PathComparer = StringComparer.InvariantCultureIgnoreCase;

@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{F3A4811B-591D-4BA4-92FE-586FDA8D2A59}</ProjectGuid>
+    <ProjectGuid>{AA5E8396-3CBC-4B29-B9BA-439AC01E2DDF}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Bundler</RootNamespace>
-    <AssemblyName>Bundler</AssemblyName>
+    <RootNamespace>Bundler.AspNet</RootNamespace>
+    <AssemblyName>Bundler.AspNet</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -41,27 +41,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BundleFile.cs" />
-    <Compile Include="BundleProvider.cs" />
-    <Compile Include="Bundler.cs" />
-    <Compile Include="BundleResponse.cs" />
-    <Compile Include="ContentSources\StringSource.cs" />
-    <Compile Include="ContentSources\StreamSource.cs" />
-    <Compile Include="Helper\BundleDirectoryHelper.cs" />
-    <Compile Include="Helper\BundleFileHelper.cs" />
-    <Compile Include="Bundle.cs" />
-    <Compile Include="Infrastructure\IBundle.cs" />
-    <Compile Include="Infrastructure\IBundleContent.cs" />
-    <Compile Include="Infrastructure\IBundleProvider.cs" />
-    <Compile Include="Infrastructure\IBundleContext.cs" />
-    <Compile Include="Infrastructure\IBundleResponse.cs" />
-    <Compile Include="Infrastructure\IBundleVirtualPathProvider.cs" />
-    <Compile Include="Infrastructure\IContentSource.cs" />
-    <Compile Include="Infrastructure\IFileContent.cs" />
-    <Compile Include="Internals\Container.cs" />
-    <Compile Include="Infrastructure\IContentTransformer.cs" />
+    <Compile Include="AspNetBundleVirtualPathProvider.cs" />
+    <Compile Include="BundlerHandler.cs" />
+    <Compile Include="BundlerModule.cs" />
+    <Compile Include="AspNetBundleContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Bundler\Bundler.csproj">
+      <Project>{f3a4811b-591d-4ba4-92fe-586fda8d2a59}</Project>
+      <Name>Bundler</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

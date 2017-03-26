@@ -2,7 +2,7 @@
 using System.Web;
 using Bundler.Infrastructure;
 
-namespace Bundler {
+namespace Bundler.AspNet {
     public sealed class BundlerHandler : IHttpHandler {
         public const string IfModifiedSinceHeader = "If-Modified-Since";
         public const string IfNoneMatch = "If-None-Match";

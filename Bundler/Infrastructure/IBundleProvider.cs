@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Bundler.Infrastructure {
     public interface IBundleProvider {
@@ -6,6 +7,12 @@ namespace Bundler.Infrastructure {
         /// Content
         /// </summary>
         IBundleContext Context { get; }
+
+        /// <summary>
+        /// Returns a list of all registered bundles
+        /// </summary>
+        /// <returns></returns>
+        IReadOnlyCollection<IBundle> GetBundles();
 
         /// <summary>
         /// Add's a bundle to the collection. Throws a exception if bundle already exists.

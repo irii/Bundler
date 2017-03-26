@@ -2,7 +2,6 @@
 
 namespace Bundler.Infrastructure {
     public interface IBundleContent {
-
         /// <summary>
         /// Hash
         /// </summary>
@@ -17,6 +16,5 @@ namespace Bundler.Infrastructure {
         /// LastModification
         /// </summary>
         DateTime LastModification { get; }
-
     }
 }
