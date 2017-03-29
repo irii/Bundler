@@ -9,7 +9,7 @@ namespace Bundler.Example {
         public IBundleProvider BundleProvider => _bundleProviderInstance;
         private static IBundleProvider _bundleProviderInstance;
 
-        private BundlerModule _bundlerModule;
+        private AspNetBundlerModule _aspNetBundlerModule;
 
         protected void Application_Start() {
             AreaRegistration.RegisterAllAreas();
@@ -25,7 +25,7 @@ namespace Bundler.Example {
 
             var bundleProvider = new BundleProvider(bundleContext);
 
-            Bundler.Current = bundleProvider;
+            AspNet.AspNetBundler.Current = bundleProvider;
             BundleConfig.SetupBundler(bundleProvider);
 
             _bundleProviderInstance = bundleProvider;
@@ -34,13 +34,13 @@ namespace Bundler.Example {
         public override void Init() {
             base.Init();
 
-            _bundlerModule = new BundlerModule(BundleProvider);
-            _bundlerModule.Init(this);
+            _aspNetBundlerModule = new AspNetBundlerModule(BundleProvider);
+            _aspNetBundlerModule.Init(this);
         }
 
         public override void Dispose() {
             base.Dispose();
-            _bundlerModule?.Dispose();
+            _aspNetBundlerModule?.Dispose();
         }
     }
 }

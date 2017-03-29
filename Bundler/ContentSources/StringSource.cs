@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading;
+﻿using System.Threading;
 using Bundler.Infrastructure;
 
 namespace Bundler.ContentSources {
@@ -12,6 +11,8 @@ namespace Bundler.ContentSources {
             Content = content;
         }
 
+        public bool IsWatchable { get; } = false;
+
         public string VirtualFile { get; }
 
         public string Content {
@@ -23,7 +24,6 @@ namespace Bundler.ContentSources {
 
                 lock (_writeLock) {
                     Interlocked.Exchange(ref _content, value);
-                    OnSourceChanged?.Invoke(this, new EventArgs());
                 }
             }
         }
@@ -32,7 +32,6 @@ namespace Bundler.ContentSources {
             return Content;
         }
 
-        public event SourceChangedEvent OnSourceChanged;
         public void Dispose() {}
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Bundler.Infrastructure;
 using Bundler.Internals;
@@ -20,11 +21,16 @@ namespace Bundler {
             TagFormat = tagFormat;
 
             _container = new Container(placeholder);
-            ChangeHandler = path => Refresh();
+
+            ChangeHandler = path => {
+                if (Context.AutoRefresh) {
+                    Refresh();
+                }
+            };
         }
 
-        private bool ProcessContent(IFileContent fileContent) {
-            return ContentTransformers.All(t => t.Process(this, fileContent));
+        private bool ProcessContent(IContentTransform contentTransform) {
+            return ContentTransformers.All(t => t.Process(this, contentTransform));
         }
 
         public bool Include(IContentSource contentSource) => IncludeInternal(contentSource, _container);
@@ -37,7 +43,7 @@ namespace Bundler {
                 return true;
             }
 
-            var fileContent = new FileContent(contentSource.VirtualFile, contentSource.Get());
+            var fileContent = new ContentTransform(contentSource.VirtualFile, contentSource.Get());
             if (fileContent.Content == null) {
                 return false;
             }
@@ -57,11 +63,9 @@ namespace Bundler {
             container.Append(contentSource, inputContent);
 
             // Register for auto refresh
-            contentSource.OnSourceChanged += (sender, args) => {
-                if (Context.AutoRefresh) {
-                    Refresh();
-                }
-            };
+            if (contentSource.IsWatchable && Context.VirtualPathProvider.FileExists(contentSource.VirtualFile)) {
+                Context.Watcher.Watch(contentSource.VirtualFile, ChangeHandler);   
+            }
 
             return true;
         }
@@ -83,20 +87,34 @@ namespace Bundler {
         }
 
         public void Dispose() {
+            foreach (var file in _container.Current.Files) {
+                var source = _container.Current.Sources[file.Value];
+                Context.Watcher.Watch(source.VirtualFile, ChangeHandler);
+            }
+            
             // Make conatiner empty to lose all dependencies
             _container.Refresh((tuple, container) => true);
         }
 
         public FileChangedDelegate ChangeHandler { get; }
 
-        private class FileContent : IFileContent {
-            public FileContent(string virtualFile, string content) {
-                VirtualFile = virtualFile;
+        private class ContentTransform : IContentTransform {
+            private readonly List<string> _errors = new List<string>(0);
+
+            public ContentTransform(string virtualFile, string content) {
+                VirtualPath = virtualFile;
                 Content = content;
             }
 
-            public string VirtualFile { get; }
             public string Content { get; set; }
+            public string VirtualPath { get; }
+            public IReadOnlyCollection<string> Errors => _errors;
+
+            public void AddError(string logMessage) {
+                if (!_errors.Contains(logMessage)) {
+                    _errors.Add(logMessage);
+                }
+            }
         }
     }
 }

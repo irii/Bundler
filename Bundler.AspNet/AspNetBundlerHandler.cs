@@ -3,7 +3,7 @@ using System.Web;
 using Bundler.Infrastructure;
 
 namespace Bundler.AspNet {
-    public sealed class BundlerHandler : IHttpHandler {
+    public sealed class AspNetBundlerHandler : IHttpHandler {
         public const string IfModifiedSinceHeader = "If-Modified-Since";
         public const string IfNoneMatch = "If-None-Match";
 
@@ -12,7 +12,7 @@ namespace Bundler.AspNet {
 
         public bool IsReusable { get; } = false;
 
-        public BundlerHandler(IBundle bundle, string requestFile) {
+        public AspNetBundlerHandler(IBundle bundle, string requestFile) {
             _bundle = bundle;
             _requestFile = requestFile;
         }

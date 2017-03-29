@@ -1,9 +1,12 @@
 ﻿using System;
 
 namespace Bundler.Infrastructure {
-    public delegate void SourceChangedEvent(object sender, EventArgs args);
-
     public interface IContentSource : IDisposable {
+        /// <summary>
+        /// Is Source watchable by BundleFileWatcher
+        /// </summary>
+        bool IsWatchable { get; }
+
         /// <summary>
         /// Virtual contentSource
         /// </summary>
@@ -14,10 +17,5 @@ namespace Bundler.Infrastructure {
         /// </summary>
         /// <returns></returns>
         string Get();
-
-        /// <summary>
-        /// Get's fired when the source is changed
-        /// </summary>
-        event SourceChangedEvent OnSourceChanged;
     }
 }

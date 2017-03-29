@@ -3,11 +3,11 @@ using System.Web;
 using Bundler.Infrastructure;
 
 namespace Bundler.AspNet {
-    public sealed class BundlerModule : IHttpModule {
+    public sealed class AspNetBundlerModule : IHttpModule {
         private readonly IBundleProvider _bundleProvider;
-        public BundlerModule() {}
+        public AspNetBundlerModule() {}
 
-        public BundlerModule(IBundleProvider bundleProvider) {
+        public AspNetBundlerModule(IBundleProvider bundleProvider) {
             _bundleProvider = bundleProvider;
         }
 
@@ -26,7 +26,7 @@ namespace Bundler.AspNet {
 
         private static void Context_PostResolveRequestCache_Default(object sender, System.EventArgs e) {
             var app = (HttpApplication) sender;
-            TryRemapHandler(app, Bundler.Current);
+            TryRemapHandler(app, AspNetBundler.Current);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -35,7 +35,7 @@ namespace Bundler.AspNet {
 
             IBundle bundle;
             if (provider.ResolveUri(app.Request.Url, out bundle, out requestFile)) {
-                app.Context.RemapHandler(new BundlerHandler(bundle, requestFile));
+                app.Context.RemapHandler(new AspNetBundlerHandler(bundle, requestFile));
             }
         }
 

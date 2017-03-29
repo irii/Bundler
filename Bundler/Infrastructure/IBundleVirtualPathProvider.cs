@@ -42,27 +42,11 @@ namespace Bundler.Infrastructure {
         IEnumerable<string> EnumerateDirectories(string virtualPath);
 
         /// <summary>
-        /// Adds a folder or file to the file system watcher.
-        /// </summary>
-        /// <param name="virtualPath"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        bool Watch(string virtualPath, FileChangedDelegate callback);
-
-        /// <summary>
-        /// Removes a registered callback to the given folder or file.
-        /// </summary>
-        /// <param name="virtualPath"></param>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        bool Unwatch(string virtualPath, FileChangedDelegate callback);
-
-        /// <summary>
-        /// Returns the full path.
+        /// Returns the full path of the target file.
         /// </summary>
         /// <param name="virtualPath"></param>
         /// <returns></returns>
-        string GetFullPath(string virtualPath);
+        string GetPhysicalPath(string virtualPath);
 
         /// <summary>
         /// Returns the virtual path.

@@ -18,7 +18,7 @@ namespace Bundler.Example.Controllers {
         }
 
         public ActionResult Refresh() {
-            foreach (var bundle in Bundler.Current.GetBundles()) {
+            foreach (var bundle in AspNet.AspNetBundler.Current.GetBundles()) {
                 bundle.Refresh();
             }
 

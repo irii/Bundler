@@ -8,6 +8,11 @@ namespace Bundler.Infrastructure {
         IBundleVirtualPathProvider VirtualPathProvider { get; }
 
         /// <summary>
+        /// File Watcher
+        /// </summary>
+        IBundleFileWatcher Watcher { get; }
+
+        /// <summary>
         /// Optimization
         /// </summary>
         bool Optimization { get; }

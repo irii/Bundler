@@ -42,8 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AspNetBundleVirtualPathProvider.cs" />
-    <Compile Include="BundlerHandler.cs" />
-    <Compile Include="BundlerModule.cs" />
+    <Compile Include="AspNetBundler.cs" />
+    <Compile Include="AspNetBundlerHandler.cs" />
+    <Compile Include="AspNetBundlerModule.cs" />
     <Compile Include="AspNetBundleContext.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

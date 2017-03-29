@@ -14,9 +14,8 @@ namespace Bundler.Helper {
         /// <param name="virtualDirectoryPath"></param>
         /// <param name="regexSearchPattern"></param>
         /// <param name="includeChildren"></param>
-        /// <param name="enableFileChangeListener"></param>
         /// <returns></returns>
-        public static IBundle AddDirectory(this IBundle bundle, string virtualDirectoryPath, string regexSearchPattern, bool includeChildren, bool enableFileChangeListener = true) {
+        public static IBundle AddDirectory(this IBundle bundle, string virtualDirectoryPath, string regexSearchPattern, bool includeChildren) {
             if (bundle == null) throw new ArgumentNullException(nameof(bundle));
             if (virtualDirectoryPath == null) throw new ArgumentNullException(nameof(virtualDirectoryPath));
             if (regexSearchPattern == null) throw new ArgumentNullException(nameof(regexSearchPattern));
@@ -30,11 +29,11 @@ namespace Bundler.Helper {
             }
 
             foreach (var file in bundle.Context.VirtualPathProvider.EnumerateFiles(virtualDirectoryPath)) {
-                bundle.AddFile(file, enableFileChangeListener);
+                bundle.AddFile(file);
 
                 if (includeChildren) {
                     foreach (var childDirectory in bundle.Context.VirtualPathProvider.EnumerateDirectories(virtualDirectoryPath)) {
-                        AddDirectory(bundle, childDirectory, regexSearchPattern, true, enableFileChangeListener);
+                        AddDirectory(bundle, childDirectory, regexSearchPattern, true);
 
                     }
                 }

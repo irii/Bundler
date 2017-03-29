@@ -10,9 +10,8 @@ namespace Bundler.Helper {
         /// </summary>
         /// <param name="bundle"></param>
         /// <param name="virtualFile"></param>
-        /// <param name="enableFileChangeListener"></param>
         /// <returns></returns>
-        public static IBundle AddFile(this IBundle bundle, string virtualFile, bool enableFileChangeListener = true) {
+        public static IBundle AddFile(this IBundle bundle, string virtualFile) {
             if (bundle == null) throw new ArgumentNullException(nameof(bundle));
             if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
 
@@ -24,7 +23,7 @@ namespace Bundler.Helper {
                 throw new FileNotFoundException("Can't find file", virtualFile);
             }
             
-            var fileContent = new StreamSource(bundle.Context.VirtualPathProvider, virtualFile, enableFileChangeListener);
+            var fileContent = new StreamSource(bundle.Context, virtualFile);
             bundle.Include(fileContent);
             return bundle;
         }

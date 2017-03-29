@@ -2,20 +2,19 @@
 using System.Threading;
 using Bundler.Infrastructure;
 
-namespace Bundler {
-    public static class Bundler {
+namespace Bundler.AspNet {
+    public static class AspNetBundler {
         private static readonly object WriteLock = new object();
         private static IBundleProvider _currentBundleProvider;
 
-        private static bool _isReady = false;
-        public static bool IsReady => _isReady;
+        public static bool IsReady { get; private set; }
 
         /// <summary>
         /// Current BundleProvider
         /// </summary>
         public static IBundleProvider Current {
             get {
-                if (!_isReady) {
+                if (!IsReady) {
                     throw new Exception("Not initialized. Set BundleProvider before use!");
                 }
                 return _currentBundleProvider;
@@ -23,7 +22,7 @@ namespace Bundler {
             set {
                 lock (WriteLock) {
                     Interlocked.Exchange(ref _currentBundleProvider, value);
-                    _isReady = true;
+                    IsReady = true;
                 }
             }
         }
