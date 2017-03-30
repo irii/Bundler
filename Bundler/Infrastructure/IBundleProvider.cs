@@ -2,8 +2,6 @@
 using System.Collections.Generic;
 
 namespace Bundler.Infrastructure {
-    public delegate string ToAbsoluteDelegate(string virtualPath);
-
     public interface IBundleProvider {
         /// <summary>
         /// Content
@@ -43,9 +41,8 @@ namespace Bundler.Infrastructure {
         /// Renders a html tag based on the tagformat.
         /// </summary>
         /// <param name="virtualPath"></param>
-        /// <param name="toAbsolute"></param>
         /// <returns></returns>
-        string Render(string virtualPath, ToAbsoluteDelegate toAbsolute);
+        string Render(string virtualPath);
 
         /// <summary>
         /// Tries to resolve the request url.

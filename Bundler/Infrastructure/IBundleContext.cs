@@ -13,6 +13,11 @@ namespace Bundler.Infrastructure {
         IBundleFileWatcher Watcher { get; }
 
         /// <summary>
+        /// Url helper
+        /// </summary>
+        IBundleUrlHelper UrlHelper { get; }
+
+        /// <summary>
         /// Optimization
         /// </summary>
         bool Optimization { get; }

@@ -16,7 +16,7 @@ namespace Bundler.Example.Application {
             _requestContext = requestContext;
         }
 
-        public IHtmlString Render(string virtualPath) => new MvcHtmlString(_bundleProvider.Render(virtualPath, VirtualPathUtility.ToAbsolute));
+        public IHtmlString Render(string virtualPath) => new MvcHtmlString(_bundleProvider.Render(virtualPath));
 
         private static string ResolveDynamicVirtualPath(RouteData routeData, string additionalIdentifier) {
             if (!routeData.Values.ContainsKey("controller") || !routeData.Values.ContainsKey("action")) {
@@ -50,14 +50,14 @@ namespace Bundler.Example.Application {
             var key = ResolveDynamicVirtualPath(_requestContext.RouteData, "Scripts");
             return key == null
                 ? MvcHtmlString.Empty
-                : new MvcHtmlString(_bundleProvider.Render(key, VirtualPathUtility.ToAbsolute));
+                : new MvcHtmlString(_bundleProvider.Render(key));
         }
 
         public IHtmlString RenderDynamicStyles() {
             var key = ResolveDynamicVirtualPath(_requestContext.RouteData, "Styles");
             return key == null
                 ? MvcHtmlString.Empty
-                : new MvcHtmlString(_bundleProvider.Render(key, VirtualPathUtility.ToAbsolute));
+                : new MvcHtmlString(_bundleProvider.Render(key));
         }
 
         public void AddScriptFile(string scriptFile) {

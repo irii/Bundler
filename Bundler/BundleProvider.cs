@@ -64,29 +64,16 @@ namespace Bundler {
                 return false;
             }
 
-            var query = uri.Query ?? string.Empty;
-            if (query.Length > 0 && query[0] == '?') {
-                var splitResult = query.Split(new []{'&'}, StringSplitOptions.RemoveEmptyEntries);
-                foreach (var s in splitResult) {
-                    var keyValue = s.Split(new[] { '=' }, StringSplitOptions.RemoveEmptyEntries);
-                    if (keyValue.Length != 2 || (!string.Equals(keyValue[0], "f", StringComparison.InvariantCultureIgnoreCase))) {
-                        continue;
-                    }
-
-                    requestFile = Uri.UnescapeDataString(keyValue[1])?.Trim();
-                    if (string.IsNullOrWhiteSpace(requestFile)) {
-                        requestFile = null;
-                    }
-
-                    return true;
-                }
+            var queryArgs = bundle.Context.UrlHelper.ParseQuery(uri.Query);
+            queryArgs.TryGetValue("f", out requestFile);
+            if (string.IsNullOrWhiteSpace(requestFile)) {
+                requestFile = null;
             }
 
-            requestFile = null;
             return true;
         }
 
-        public string Render(string virtualPath, ToAbsoluteDelegate toAbsolute) {
+        public string Render(string virtualPath) {
             IBundle bundle;
             if (!Get(virtualPath, out bundle)) {
                 return string.Empty;
@@ -95,12 +82,12 @@ namespace Bundler {
             var response = bundle.GetResponse();
 
             if (bundle.Context.BundleFiles) {
-                return string.Format(bundle.TagFormat, toAbsolute(virtualPath));
+                return string.Format(bundle.TagFormat, bundle.Context.UrlHelper.ToAbsolute(virtualPath));
             }
 
             var sB = new StringBuilder();
             foreach (var file in response.Files) {
-                sB.AppendLine(string.Format(bundle.TagFormat, toAbsolute(virtualPath) + "?f=" + Uri.EscapeDataString(file.Key)));
+                sB.AppendLine(string.Format(bundle.TagFormat, bundle.Context.UrlHelper.ToAbsolute(virtualPath) + "?f=" + Uri.EscapeDataString(file.Key)));
             }
 
             return sB.ToString();
