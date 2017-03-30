@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 
 namespace Bundler.Infrastructure {
-    public delegate void FileChangedDelegate(string virtualPath);
-
     public interface IBundleVirtualPathProvider : IDisposable {
         /// <summary>
         /// Open file based on the virtual path.

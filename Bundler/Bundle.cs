@@ -60,7 +60,9 @@ namespace Bundler {
                 inputContent = fileContent.Content;
             }
 
-            container.Append(contentSource, inputContent);
+            if (!container.Append(contentSource, inputContent)) {
+                return true;
+            }
 
             // Register for auto refresh
             if (contentSource.IsWatchable && Context.VirtualPathProvider.FileExists(contentSource.VirtualFile)) {
@@ -89,7 +91,7 @@ namespace Bundler {
         public void Dispose() {
             foreach (var file in _container.Current.Files) {
                 var source = _container.Current.Sources[file.Value];
-                Context.Watcher.Watch(source.VirtualFile, ChangeHandler);
+                Context.Watcher.Unwatch(source.VirtualFile, ChangeHandler);
             }
             
             // Make conatiner empty to lose all dependencies

@@ -49,7 +49,7 @@
     <Compile Include="Helper\BundleDirectoryHelper.cs" />
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Bundle.cs" />
-    <Compile Include="Helper\FileWatcher.cs" />
+    <Compile Include="Infrastructure\FileChangedDelegate.cs" />
     <Compile Include="Infrastructure\IBundle.cs" />
     <Compile Include="Infrastructure\IBundleContent.cs" />
     <Compile Include="Infrastructure\IBundleFileWatcher.cs" />

@@ -17,5 +17,11 @@ namespace Bundler.Infrastructure {
         /// <param name="callback"></param>
         /// <returns></returns>
         void Unwatch(string virtualPath, FileChangedDelegate callback);
+
+        /// <summary>
+        /// Simulates a change event.
+        /// </summary>
+        /// <param name="virtualPath"></param>
+        void InvokeChange(string virtualPath);
     }
 }

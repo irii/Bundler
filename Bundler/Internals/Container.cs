@@ -40,17 +40,17 @@ namespace Bundler.Internals {
 
         public ContainerTuple Current => _current;
 
-        public void Append(IContentSource contentSource, string transformedContent) {
+        public bool Append(IContentSource contentSource, string transformedContent) {
             if (contentSource == null) throw new ArgumentNullException(nameof(contentSource));
             if (transformedContent == null) throw new ArgumentNullException(nameof(transformedContent));
 
             if (_current.Files.ContainsKey(contentSource.VirtualFile)) {
-                return;
+                return false;
             }
 
             lock (_writeLock) {
                 if (_current.Files.ContainsKey(contentSource.VirtualFile)) {
-                    return;
+                    return false;
                 }
 
                 var newContent = string.IsNullOrWhiteSpace(_current.Content)
@@ -70,6 +70,8 @@ namespace Bundler.Internals {
 
                 Interlocked.Exchange(ref _current, @new);
             }
+
+            return true;
         }
 
         public bool Refresh(Func<ContainerTuple, Container, bool> action) {
