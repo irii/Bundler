@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Bundler.Infrastructure {
     public interface IBundleProvider {
         /// <summary>
-        /// Content
+        /// Context
         /// </summary>
         IBundleContext Context { get; }
 

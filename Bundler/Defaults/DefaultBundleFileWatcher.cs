@@ -7,7 +7,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Bundler.Infrastructure;
 
-namespace Bundler {
+namespace Bundler.Defaults {
     /// <summary>
     /// TODO: Do not depend on physical location (virtual directories...)
     /// </summary>
@@ -20,7 +20,7 @@ namespace Bundler {
         private readonly Task _watchEventGroupingTask;
         private readonly object _fileSyncLock = new object();
         private readonly IDictionary<string, FileChangeEventInfo> _files = new Dictionary<string, FileChangeEventInfo>(StringComparer.InvariantCultureIgnoreCase);
-
+        
         public DefaultBundleFileWatcher(IBundleVirtualPathProvider virtualPathProvider) {
             _virtualPathProvider = virtualPathProvider;
             _fileSystemWatcher = new FileSystemWatcher(virtualPathProvider.GetPhysicalPath("~/")) {

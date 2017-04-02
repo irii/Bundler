@@ -2,7 +2,7 @@
 using Bundler.Infrastructure;
 
 namespace Bundler.ContentSources {
-    public class StringSource : IContentSource {
+    public class StringSource : ISource {
         private readonly object _writeLock = new object();
         private string _content;
 

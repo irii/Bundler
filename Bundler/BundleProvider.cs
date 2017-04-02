@@ -80,8 +80,8 @@ namespace Bundler {
             }
 
             var response = bundle.GetResponse();
-
-            if (bundle.Context.BundleFiles) {
+            
+            if (bundle.Context.Configuration.BundleFiles) {
                 return string.Format(bundle.TagFormat, bundle.Context.UrlHelper.ToAbsolute(virtualPath));
             }
 
@@ -95,6 +95,10 @@ namespace Bundler {
 
 
         private static void ValidateVirtualPath(string virtualPath) {
+            if (virtualPath == null) {
+                throw new ArgumentNullException(nameof(virtualPath));
+            }
+
             if (!virtualPath.StartsWith("~/")) {
                 throw new ArgumentException("Path should be virtual!");
             }

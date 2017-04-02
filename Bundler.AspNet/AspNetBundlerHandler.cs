@@ -28,8 +28,8 @@ namespace Bundler.AspNet {
                 return;
             }
 
-            if (_bundle.Context.Cache) {
-                if (_bundle.Context.ETag) {
+            if (_bundle.Context.Configuration.Cache) {
+                if (_bundle.Context.Configuration.ETag) {
                     var requestETag = context.Request.Headers[IfNoneMatch];
                     if (!string.IsNullOrWhiteSpace(requestETag) && string.Equals(requestETag, bundleContent.ContentHash, StringComparison.InvariantCultureIgnoreCase)) {
                         context.Response.StatusCode = 304;
@@ -50,14 +50,14 @@ namespace Bundler.AspNet {
 
             context.Response.StatusCode = 200;
 
-            if (_bundle.Context.Cache) {
-                if (_bundle.Context.ETag) {
+            if (_bundle.Context.Configuration.Cache) {
+                if (_bundle.Context.Configuration.ETag) {
                     context.Response.Cache.SetETag(bundleContent.ContentHash);
                 }
 
                 context.Response.Cache.SetCacheability(HttpCacheability.Public);
                 context.Response.Cache.SetLastModified(DateTime.Now);
-                context.Response.Cache.SetExpires(DateTime.Now.Add(_bundle.Context.CacheDuration));
+                context.Response.Cache.SetExpires(DateTime.Now.Add(_bundle.Context.Configuration.CacheDuration));
             }
         }
     }

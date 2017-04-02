@@ -1,4 +1,5 @@
-﻿using Bundler.Infrastructure;
+﻿using System.Linq;
+using Bundler.Infrastructure;
 
 namespace Bundler.JavaScript {
     public static class Scripts {
@@ -8,8 +9,8 @@ namespace Bundler.JavaScript {
 
         private const string PlaceHolder = ";\r\n";
 
-        public static IBundle CreateScriptBundle(this IBundleProvider bundleProvider, bool async = false) {
-            return new Bundle(bundleProvider.Context, ContentType, PlaceHolder, async ? TagFormatAsync : TagFormat, new JavaScriptContentTransformer());
+        public static IBundle CreateScriptBundle(this IBundleProvider bundleProvider, bool async = false, params IBundleContentTransformer[] additionalContentTransformers) {
+            return new Bundle(bundleProvider.Context, ContentType, PlaceHolder, async ? TagFormatAsync : TagFormat, new[] { new JavaScriptBundleContentTransformer() }.Union(additionalContentTransformers).ToArray());
         }
     }
 }

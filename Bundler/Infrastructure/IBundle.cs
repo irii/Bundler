@@ -21,9 +21,9 @@ namespace Bundler.Infrastructure {
         /// <summary>
         /// Includes a new file to the Bundle
         /// </summary>
-        /// <param name="contentSource"></param>
+        /// <param name="source"></param>
         /// <returns></returns>
-        bool Include(IContentSource contentSource);
+        bool Include(ISource source);
 
         /// <summary>
         /// Refreshes the bundle.

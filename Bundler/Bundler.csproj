@@ -45,12 +45,14 @@
     <Compile Include="BundleResponse.cs" />
     <Compile Include="ContentSources\StringSource.cs" />
     <Compile Include="ContentSources\StreamSource.cs" />
-    <Compile Include="DefaultBundleFileWatcher.cs" />
+    <Compile Include="Defaults\DefaultBundleConfiguration.cs" />
+    <Compile Include="Defaults\DefaultBundleFileWatcher.cs" />
     <Compile Include="Helper\BundleDirectoryHelper.cs" />
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Bundle.cs" />
     <Compile Include="Infrastructure\FileChangedDelegate.cs" />
     <Compile Include="Infrastructure\IBundle.cs" />
+    <Compile Include="Infrastructure\IBundleConfiguration.cs" />
     <Compile Include="Infrastructure\IBundleContent.cs" />
     <Compile Include="Infrastructure\IBundleFileWatcher.cs" />
     <Compile Include="Infrastructure\IBundleProvider.cs" />
@@ -58,9 +60,9 @@
     <Compile Include="Infrastructure\IBundleResponse.cs" />
     <Compile Include="Infrastructure\IBundleUrlHelper.cs" />
     <Compile Include="Infrastructure\IBundleVirtualPathProvider.cs" />
-    <Compile Include="Infrastructure\IContentSource.cs" />
+    <Compile Include="Infrastructure\ISource.cs" />
     <Compile Include="Internals\Container.cs" />
-    <Compile Include="Infrastructure\IContentTransformer.cs" />
+    <Compile Include="Infrastructure\IBundleContentTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />

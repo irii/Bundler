@@ -3,7 +3,7 @@ using System.IO;
 using Bundler.Infrastructure;
 
 namespace Bundler.ContentSources {
-    public class StreamSource : IContentSource {
+    public class StreamSource : ISource {
         private readonly IBundleContext _bundleContext;
 
         public bool IsWatchable { get; } = true;

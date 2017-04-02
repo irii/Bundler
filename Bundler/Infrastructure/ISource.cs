@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Bundler.Infrastructure {
-    public interface IContentSource : IDisposable {
+    public interface ISource : IDisposable {
         /// <summary>
         /// Is Source watchable by BundleFileWatcher
         /// </summary>

@@ -7,7 +7,7 @@ using Bundler.Infrastructure;
 namespace Bundler.Internals {
     internal sealed class Container {
         public class ContainerTuple {
-            public ContainerTuple(string content, IReadOnlyDictionary<string, IBundleContent> files, IReadOnlyDictionary<IBundleContent, IContentSource> sources, string hash) {
+            public ContainerTuple(string content, IReadOnlyDictionary<string, IBundleContent> files, IReadOnlyDictionary<IBundleContent, ISource> sources, string hash) {
                 Content = content;
                 Files = files;
                 Sources = sources;
@@ -16,13 +16,13 @@ namespace Bundler.Internals {
 
             public string Content { get; }
             public IReadOnlyDictionary<string, IBundleContent> Files { get; }
-            public IReadOnlyDictionary<IBundleContent, IContentSource> Sources { get; }
+            public IReadOnlyDictionary<IBundleContent, ISource> Sources { get; }
 
             public string Hash { get; }
             public DateTime LastModification { get; } = DateTime.Now;
 
 
-            public static ContainerTuple Empty() => new ContainerTuple(string.Empty, new Dictionary<string, IBundleContent>(StringComparer.InvariantCultureIgnoreCase), new Dictionary<IBundleContent, IContentSource>(), GetContentHash(string.Empty));
+            public static ContainerTuple Empty() => new ContainerTuple(string.Empty, new Dictionary<string, IBundleContent>(StringComparer.InvariantCultureIgnoreCase), new Dictionary<IBundleContent, ISource>(), GetContentHash(string.Empty));
         }
 
         private readonly string _placeholder;
@@ -40,16 +40,16 @@ namespace Bundler.Internals {
 
         public ContainerTuple Current => _current;
 
-        public bool Append(IContentSource contentSource, string transformedContent) {
-            if (contentSource == null) throw new ArgumentNullException(nameof(contentSource));
+        public bool Append(ISource source, string transformedContent) {
+            if (source == null) throw new ArgumentNullException(nameof(source));
             if (transformedContent == null) throw new ArgumentNullException(nameof(transformedContent));
 
-            if (_current.Files.ContainsKey(contentSource.VirtualFile)) {
+            if (_current.Files.ContainsKey(source.VirtualFile)) {
                 return false;
             }
 
             lock (_writeLock) {
-                if (_current.Files.ContainsKey(contentSource.VirtualFile)) {
+                if (_current.Files.ContainsKey(source.VirtualFile)) {
                     return false;
                 }
 
@@ -57,14 +57,14 @@ namespace Bundler.Internals {
                     ? string.Concat(_current.Content, transformedContent)
                     : string.Concat(_current.Content, _placeholder, transformedContent);
 
-                var file = new BundleFile(contentSource.VirtualFile, GetContentHash(transformedContent),
+                var file = new BundleFile(source.VirtualFile, GetContentHash(transformedContent),
                     transformedContent, DateTime.Now);
 
                 var dictionary = CreateDictionary(_current.Files);
-                dictionary.Add(contentSource.VirtualFile, file);
+                dictionary.Add(source.VirtualFile, file);
 
                 var sources = _current.Sources.ToDictionary(x => x.Key, y => y.Value);
-                sources.Add(file, contentSource);
+                sources.Add(file, source);
 
                 var @new = new ContainerTuple(newContent, dictionary, sources, GetContentHash(newContent));
 

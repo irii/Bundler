@@ -5,34 +5,34 @@ using dotless.Core;
 using dotless.Core.configuration;
 
 namespace Bundler.Less {
-    public class LessContentTransformer : IContentTransformer {
+    public class LessBundleContentTransformer : IBundleContentTransformer {
         void IDisposable.Dispose() { }
 
-        protected virtual DotlessConfiguration GetDotlessConfiguration(IBundle bundle, IContentTransform contentTransform) {
+        protected virtual DotlessConfiguration GetDotlessConfiguration(IBundle bundle, IBundleContentTransformResult bundleContentTransformResult) {
             var configuration = new DotlessConfiguration {
-                MinifyOutput = bundle.Context.Optimization,
+                MinifyOutput = bundle.Context.Configuration.Optimization,
                 MapPathsToWeb = false,
                 DisableParameters = false,
                 CacheEnabled = false,
-                RootPath = bundle.Context.VirtualPathProvider.GetPhysicalPath(Path.GetDirectoryName(contentTransform.VirtualPath))
+                RootPath = bundle.Context.VirtualPathProvider.GetPhysicalPath(Path.GetDirectoryName(bundleContentTransformResult.VirtualPath))
             };
 
             return configuration;
         }
 
-        bool IContentTransformer.Process(IBundle bundle, IContentTransform contentTransform) {
-            if (string.IsNullOrWhiteSpace(contentTransform.Content)) {
-                contentTransform.Content = string.Empty;
+        bool IBundleContentTransformer.Process(IBundle bundle, IBundleContentTransformResult bundleContentTransformResult) {
+            if (string.IsNullOrWhiteSpace(bundleContentTransformResult.Content)) {
+                bundleContentTransformResult.Content = string.Empty;
                 return true;
             }
 
-            var configuration = GetDotlessConfiguration(bundle, contentTransform);
+            var configuration = GetDotlessConfiguration(bundle, bundleContentTransformResult);
 
             var lessEngine = new EngineFactory(configuration).GetEngine();
             lessEngine.CurrentDirectory = configuration.RootPath;
 
             try {
-                contentTransform.Content = lessEngine.TransformToCss(contentTransform.Content, null) ?? string.Empty;
+                bundleContentTransformResult.Content = lessEngine.TransformToCss(bundleContentTransformResult.Content, null) ?? string.Empty;
 
                 // Register dependencies
                 var imports = lessEngine.GetImports();
@@ -42,7 +42,7 @@ namespace Bundler.Less {
 
                 return true;
             } catch (Exception ex) {
-                contentTransform.AddError(ex.Message);
+                bundleContentTransformResult.Errors.Add(ex.Message);
                 return false;
             }
         }

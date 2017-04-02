@@ -6,7 +6,7 @@ using Bundler.Internals;
 
 namespace Bundler {
     public class Bundle : IBundle {
-        protected readonly IContentTransformer[] ContentTransformers;
+        protected readonly IBundleContentTransformer[] BundleContentTransformers;
 
         public string ContentType { get; }
         public string TagFormat { get; }
@@ -14,36 +14,36 @@ namespace Bundler {
 
         private readonly Container _container;
 
-        public Bundle(IBundleContext bundleContext, string contentType, string placeholder, string tagFormat, params IContentTransformer[] transformers) {
+        public Bundle(IBundleContext bundleContext, string contentType, string placeholder, string tagFormat, params IBundleContentTransformer[] contentTransformers) {
             Context = bundleContext;
-            ContentTransformers = transformers?.ToArray() ?? new IContentTransformer[0];
+            BundleContentTransformers = contentTransformers?.ToArray() ?? new IBundleContentTransformer[0];
             ContentType = contentType;
             TagFormat = tagFormat;
 
             _container = new Container(placeholder);
 
             ChangeHandler = path => {
-                if (Context.AutoRefresh) {
+                if (Context.Configuration.AutoRefresh) {
                     Refresh();
                 }
             };
         }
 
-        private bool ProcessContent(IContentTransform contentTransform) {
-            return ContentTransformers.All(t => t.Process(this, contentTransform));
+        private bool ProcessContent(IBundleContentTransformResult bundleContentTransformResult) {
+            return BundleContentTransformers.All(t => t.Process(this, bundleContentTransformResult));
         }
 
-        public bool Include(IContentSource contentSource) => IncludeInternal(contentSource, _container);
+        public bool Include(ISource source) => IncludeInternal(source, _container);
 
-        private bool IncludeInternal(IContentSource contentSource, Container container) {
-            if (contentSource == null) throw new ArgumentNullException(nameof(contentSource));
+        private bool IncludeInternal(ISource source, Container container) {
+            if (source == null) throw new ArgumentNullException(nameof(source));
             if (container == null) throw new ArgumentNullException(nameof(container));
 
-            if (container.Exists(contentSource.VirtualFile)) {
+            if (container.Exists(source.VirtualFile)) {
                 return true;
             }
 
-            var fileContent = new ContentTransform(contentSource.VirtualFile, contentSource.Get());
+            var fileContent = new BundleContentTransformResult(source.VirtualFile, source.Get());
             if (fileContent.Content == null) {
                 return false;
             }
@@ -52,7 +52,7 @@ namespace Bundler {
 
             var processResult = ProcessContent(fileContent);
             if (!processResult) {
-                if (!Context.FallbackOnError) {
+                if (!Context.Configuration.FallbackOnError) {
                     return false;
                 }
 
@@ -60,13 +60,13 @@ namespace Bundler {
                 inputContent = fileContent.Content;
             }
 
-            if (!container.Append(contentSource, inputContent)) {
+            if (!container.Append(source, inputContent)) {
                 return true;
             }
 
             // Register for auto refresh
-            if (contentSource.IsWatchable && Context.VirtualPathProvider.FileExists(contentSource.VirtualFile)) {
-                Context.Watcher.Watch(contentSource.VirtualFile, ChangeHandler);   
+            if (source.IsWatchable && Context.VirtualPathProvider.FileExists(source.VirtualFile)) {
+                Context.Watcher.Watch(source.VirtualFile, ChangeHandler);   
             }
 
             return true;
@@ -85,7 +85,7 @@ namespace Bundler {
         }
 
         public IBundleResponse GetResponse() {
-            return new BundleResponse(ContentType, _container.ContentHash, _container.LastModification, _container.Content, _container.Current.Files);
+            return new BundleResponse(ContentType, _container.ContentHash, _container.LastModification, _container.Content, _container.Current.Files, new Dictionary<string, string>(0));
         }
 
         public void Dispose() {
@@ -100,23 +100,15 @@ namespace Bundler {
 
         public FileChangedDelegate ChangeHandler { get; }
 
-        private class ContentTransform : IContentTransform {
-            private readonly List<string> _errors = new List<string>(0);
-
-            public ContentTransform(string virtualFile, string content) {
+        private class BundleContentTransformResult : IBundleContentTransformResult {
+            public BundleContentTransformResult(string virtualFile, string content) {
                 VirtualPath = virtualFile;
                 Content = content;
             }
-
             public string Content { get; set; }
             public string VirtualPath { get; }
-            public IReadOnlyCollection<string> Errors => _errors;
 
-            public void AddError(string logMessage) {
-                if (!_errors.Contains(logMessage)) {
-                    _errors.Add(logMessage);
-                }
-            }
+            public ICollection<string> Errors { get; } = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
         }
     }
 }
