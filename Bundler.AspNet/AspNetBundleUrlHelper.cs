@@ -13,5 +13,13 @@ namespace Bundler.AspNet {
             var nvc = HttpUtility.ParseQueryString(query ?? string.Empty);
             return nvc.AllKeys.Distinct().ToDictionary(x => x, y => nvc[y]);
         }
+
+        public string Encode(string input) {
+            return HttpUtility.UrlEncode(input);
+        }
+
+        public string Decode(string input) {
+            return HttpUtility.UrlDecode(input);
+        }
     }
 }

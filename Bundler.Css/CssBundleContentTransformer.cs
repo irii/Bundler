@@ -6,7 +6,7 @@ namespace Bundler.Css {
     public class CssBundleContentTransformer : IBundleContentTransformer {
         void IDisposable.Dispose() { }
 
-        bool IBundleContentTransformer.Process(IBundle bundle, IBundleContentTransformResult bundleContentTransformResult) {
+        bool IBundleContentTransformer.Process(IBundle bundle, BundleContentTransform bundleContentTransformResult) {
             if (!bundle.Context.Configuration.Optimization || string.IsNullOrWhiteSpace(bundleContentTransformResult.Content)) {
                 bundleContentTransformResult.Content = bundleContentTransformResult.Content.Trim();
                 return true;

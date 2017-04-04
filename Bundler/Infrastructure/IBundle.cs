@@ -3,11 +3,6 @@
 namespace Bundler.Infrastructure {
     public interface IBundle : IDisposable {
         /// <summary>
-        /// Used format for rendering
-        /// </summary>
-        string TagFormat { get; }
-
-        /// <summary>
         /// Context
         /// </summary>
         IBundleContext Context { get; }
@@ -34,5 +29,12 @@ namespace Bundler.Infrastructure {
         /// Handler callback for custom dependencies.
         /// </summary>
         FileChangedDelegate ChangeHandler { get; }
+
+        /// <summary>
+        /// Renders a bundle specific tag.
+        /// </summary>
+        /// <param name="url"></param>
+        /// <returns></returns>
+        string Render(string url);
     }
 }

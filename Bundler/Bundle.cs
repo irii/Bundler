@@ -20,7 +20,7 @@ namespace Bundler {
             ContentType = contentType;
             TagFormat = tagFormat;
 
-            _container = new Container(placeholder);
+            _container = new Container(placeholder, contentType);
 
             ChangeHandler = path => {
                 if (Context.Configuration.AutoRefresh) {
@@ -29,7 +29,7 @@ namespace Bundler {
             };
         }
 
-        private bool ProcessContent(IBundleContentTransformResult bundleContentTransformResult) {
+        private bool ProcessContent(BundleContentTransform bundleContentTransformResult) {
             return BundleContentTransformers.All(t => t.Process(this, bundleContentTransformResult));
         }
 
@@ -43,7 +43,7 @@ namespace Bundler {
                 return true;
             }
 
-            var fileContent = new BundleContentTransformResult(source.VirtualFile, source.Get());
+            var fileContent = new BundleContentTransform(source.VirtualFile, source.Get());
             if (fileContent.Content == null) {
                 return false;
             }
@@ -100,15 +100,8 @@ namespace Bundler {
 
         public FileChangedDelegate ChangeHandler { get; }
 
-        private class BundleContentTransformResult : IBundleContentTransformResult {
-            public BundleContentTransformResult(string virtualFile, string content) {
-                VirtualPath = virtualFile;
-                Content = content;
-            }
-            public string Content { get; set; }
-            public string VirtualPath { get; }
-
-            public ICollection<string> Errors { get; } = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
+        public string Render(string url) {
+            return string.Format(TagFormat, url);
         }
     }
 }

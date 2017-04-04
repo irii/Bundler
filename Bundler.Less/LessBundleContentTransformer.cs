@@ -8,7 +8,7 @@ namespace Bundler.Less {
     public class LessBundleContentTransformer : IBundleContentTransformer {
         void IDisposable.Dispose() { }
 
-        protected virtual DotlessConfiguration GetDotlessConfiguration(IBundle bundle, IBundleContentTransformResult bundleContentTransformResult) {
+        protected virtual DotlessConfiguration GetDotlessConfiguration(IBundle bundle, BundleContentTransform bundleContentTransformResult) {
             var configuration = new DotlessConfiguration {
                 MinifyOutput = bundle.Context.Configuration.Optimization,
                 MapPathsToWeb = false,
@@ -20,7 +20,7 @@ namespace Bundler.Less {
             return configuration;
         }
 
-        bool IBundleContentTransformer.Process(IBundle bundle, IBundleContentTransformResult bundleContentTransformResult) {
+        bool IBundleContentTransformer.Process(IBundle bundle, BundleContentTransform bundleContentTransformResult) {
             if (string.IsNullOrWhiteSpace(bundleContentTransformResult.Content)) {
                 bundleContentTransformResult.Content = string.Empty;
                 return true;
@@ -30,7 +30,7 @@ namespace Bundler.Less {
 
             var lessEngine = new EngineFactory(configuration).GetEngine();
             lessEngine.CurrentDirectory = configuration.RootPath;
-
+            
             try {
                 bundleContentTransformResult.Content = lessEngine.TransformToCss(bundleContentTransformResult.Content, null) ?? string.Empty;
 

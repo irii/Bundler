@@ -20,7 +20,8 @@ namespace Bundler.Example {
                 BundleFiles = true,
                 Optimization = true,
                 Cache = true,
-                AutoRefresh = true
+                AutoRefresh = true,
+                ETag = true
             });
 
             var bundleProvider = new BundleProvider(bundleContext);

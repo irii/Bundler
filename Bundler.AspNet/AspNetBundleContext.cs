@@ -24,14 +24,6 @@ namespace Bundler.AspNet {
             UrlHelper = bundleUrlHelper;
         }
 
-        public bool Optimization { get; set; }
-        public bool Cache { get; set; }
-        public bool FallbackOnError { get; set; }
-        public bool BundleFiles { get; set; }
-        public TimeSpan CacheDuration { get; set; }
-        public bool ETag { get; set; }
-        public bool AutoRefresh { get; set; }
-
         public IBundleConfiguration Configuration { get; }
         public IBundleVirtualPathProvider VirtualPathProvider { get; }
         public IBundleFileWatcher Watcher { get; }

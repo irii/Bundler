@@ -46,12 +46,12 @@ namespace Bundler.Infrastructure {
 
         /// <summary>
         /// Tries to resolve the request url.
-        /// Returns a bundle if matching was success.
+        /// Returns a response object if matching was success.
         /// </summary>
         /// <param name="uri"></param>
         /// <param name="bundle"></param>
-        /// <param name="requestFile"></param>
+        /// <param name="requestVersion"></param>
         /// <returns></returns>
-        bool ResolveUri(Uri uri, out IBundle bundle, out string requestFile);
+        bool GetResponse(Uri uri, out IBundleContentResponse bundle, out string requestVersion);
     }
 }

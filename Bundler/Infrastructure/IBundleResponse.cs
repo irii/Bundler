@@ -1,14 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Bundler.Infrastructure {
     public interface IBundleResponse : IBundleContentResponse {
         /// <summary>
         /// List of all Files
         /// </summary>
-        IReadOnlyDictionary<string, IBundleContent> Files { get; }
+        IReadOnlyDictionary<string, IBundleContentResponse> Files { get; }
     }
 
-    public interface IBundleContentResponse : IBundleContent {
+    public interface IBundleContentResponse {
         /// <summary>
         /// ContentType
         /// </summary>
@@ -19,5 +20,19 @@ namespace Bundler.Infrastructure {
         /// </summary>
         IReadOnlyDictionary<string, string> Headers { get; }
 
+        /// <summary>
+        /// Hash
+        /// </summary>
+        string ContentHash { get; }
+
+        /// <summary>
+        /// Transformed content
+        /// </summary>
+        string Content { get; }
+
+        /// <summary>
+        /// LastModification
+        /// </summary>
+        DateTime LastModification { get; }
     }
 }

@@ -3,7 +3,7 @@ using System;
 namespace Bundler.Infrastructure {
     public interface IBundleFileWatcher : IDisposable {
         /// <summary>
-        /// Adds a folder or file to the file system watcher.
+        /// Adds a file to the file system watcher.
         /// </summary>
         /// <param name="virtualPath"></param>
         /// <param name="callback"></param>
@@ -11,7 +11,7 @@ namespace Bundler.Infrastructure {
         void Watch(string virtualPath, FileChangedDelegate callback);
 
         /// <summary>
-        /// Removes a registered callback to the given folder or file.
+        /// Removes a registered callback to the given file.
         /// </summary>
         /// <param name="virtualPath"></param>
         /// <param name="callback"></param>

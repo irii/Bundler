@@ -31,11 +31,10 @@ namespace Bundler.AspNet {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private static void TryRemapHandler(HttpApplication app, IBundleProvider provider) {
-            string requestFile;
-
-            IBundle bundle;
-            if (provider.ResolveUri(app.Request.Url, out bundle, out requestFile)) {
-                app.Context.RemapHandler(new AspNetBundlerHandler(bundle, requestFile));
+            IBundleContentResponse bundleResponse;
+            string requestVersion;
+            if (provider.GetResponse(app.Request.Url, out bundleResponse, out requestVersion)) {
+                app.Context.RemapHandler(new AspNetBundlerHandler(provider.Context, bundleResponse, requestVersion));
             }
         }
 

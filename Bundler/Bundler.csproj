@@ -50,10 +50,11 @@
     <Compile Include="Helper\BundleDirectoryHelper.cs" />
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Bundle.cs" />
+    <Compile Include="Helper\ConfigurationValidator.cs" />
+    <Compile Include="Infrastructure\BundleContentTransform.cs" />
     <Compile Include="Infrastructure\FileChangedDelegate.cs" />
     <Compile Include="Infrastructure\IBundle.cs" />
     <Compile Include="Infrastructure\IBundleConfiguration.cs" />
-    <Compile Include="Infrastructure\IBundleContent.cs" />
     <Compile Include="Infrastructure\IBundleFileWatcher.cs" />
     <Compile Include="Infrastructure\IBundleProvider.cs" />
     <Compile Include="Infrastructure\IBundleContext.cs" />

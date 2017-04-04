@@ -3,6 +3,9 @@ using Bundler.Infrastructure;
 
 namespace Bundler.Defaults {
     public class DefaultBundleConfiguration : IBundleConfiguration {
+        public string VersionQueryParameterName { get; } = "v";
+        public string FileQueryParameterName { get; } = "f";
+
         public bool Optimization { get; set; }
         public bool Cache { get; set; }
         public bool ETag { get; set; }

@@ -2,6 +2,16 @@
 
 namespace Bundler.Infrastructure {
     public interface IBundleConfiguration {
+        
+        /// <summary>
+        /// Returns the query parameter name of the version argument.
+        /// </summary>
+        string VersionQueryParameterName { get; }
+
+        /// <summary>
+        /// Returns the query parameter name of the file argument.
+        /// </summary>
+        string FileQueryParameterName { get; }
 
         /// <summary>
         /// Optimization
@@ -9,7 +19,7 @@ namespace Bundler.Infrastructure {
         bool Optimization { get; }
 
         /// <summary>
-        /// Server cache
+        /// Enable Server cache
         /// </summary>
         bool Cache { get; }
 
