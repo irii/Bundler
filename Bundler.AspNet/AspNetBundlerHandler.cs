@@ -20,6 +20,8 @@ namespace Bundler.AspNet {
         }
 
         public void ProcessRequest(HttpContext context) {
+            context.Response.ContentType = _bundleContentResponse.ContentType;
+
             if (_bundleContext.Configuration.Cache) {
                 if (_bundleContext.Configuration.ETag) {
                     var requestETag = context.Request.Headers[IfNoneMatch];
@@ -37,9 +39,7 @@ namespace Bundler.AspNet {
                 }
             }
 
-            context.Response.ContentType = _bundleContentResponse.ContentType;
             context.Response.Write(_bundleContentResponse.Content);
-
             context.Response.StatusCode = 200;
 
             if (_bundleContext.Configuration.Cache) {
@@ -48,8 +48,8 @@ namespace Bundler.AspNet {
                 }
 
                 context.Response.Cache.SetCacheability(HttpCacheability.Public);
-                context.Response.Cache.SetLastModified(DateTime.Now);
-                context.Response.Cache.SetExpires(DateTime.Now.Add(_bundleContext.Configuration.CacheDuration));
+                context.Response.Cache.SetLastModified(DateTime.UtcNow);
+                context.Response.Cache.SetExpires(DateTime.UtcNow.Add(_bundleContext.Configuration.CacheDuration));
             }
         }
     }

@@ -31,7 +31,7 @@ namespace Bundler.Infrastructure {
         string Content { get; }
 
         /// <summary>
-        /// LastModification
+        /// LastModification (UTC)
         /// </summary>
         DateTime LastModification { get; }
     }

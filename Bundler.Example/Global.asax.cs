@@ -22,7 +22,7 @@ namespace Bundler.Example {
                 Cache = true,
                 AutoRefresh = true,
                 ETag = true
-            });
+            }, new DebugBundleDiagnostic());
 
             var bundleProvider = new BundleProvider(bundleContext);
 

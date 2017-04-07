@@ -21,7 +21,7 @@ namespace Bundler.Internals {
             public IReadOnlyDictionary<IBundleContentResponse, ISource> Sources { get; }
 
             public string Hash { get; }
-            public DateTime LastModification { get; } = DateTime.Now;
+            public DateTime LastModification { get; } = DateTime.UtcNow;
 
 
             public static ContainerTuple Empty() => new ContainerTuple(string.Empty, new Dictionary<string, IBundleContentResponse>(StringComparer.InvariantCultureIgnoreCase), new Dictionary<IBundleContentResponse, ISource>(), GetContentHash(string.Empty));
@@ -61,7 +61,9 @@ namespace Bundler.Internals {
                     ? string.Concat(_current.Content, transformedContent)
                     : string.Concat(_current.Content, _placeholder, transformedContent);
 
-                var file = new BundleFile(source.VirtualFile, _contentType, GetContentHash(transformedContent), transformedContent, DateTime.Now);
+                var lastModification = DateTime.UtcNow;
+
+                var file = new BundleFile(source.VirtualFile, _contentType, GetContentHash(transformedContent), transformedContent, lastModification);
 
                 var dictionary = CreateDictionary(_current.Files);
                 dictionary.Add(source.VirtualFile, file);

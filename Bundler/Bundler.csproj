@@ -45,8 +45,10 @@
     <Compile Include="BundleResponse.cs" />
     <Compile Include="ContentSources\StringSource.cs" />
     <Compile Include="ContentSources\StreamSource.cs" />
+    <Compile Include="Defaults\DebugBundleDiagnostic.cs" />
     <Compile Include="Defaults\DefaultBundleConfiguration.cs" />
     <Compile Include="Defaults\DefaultBundleFileWatcher.cs" />
+    <Compile Include="Defaults\EmptyBundleDiagnostic.cs" />
     <Compile Include="Helper\BundleDirectoryHelper.cs" />
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Bundle.cs" />
@@ -56,6 +58,7 @@
     <Compile Include="Infrastructure\IBundle.cs" />
     <Compile Include="Infrastructure\IBundleConfiguration.cs" />
     <Compile Include="Infrastructure\IBundleFileWatcher.cs" />
+    <Compile Include="Infrastructure\IBundleDiagnostic.cs" />
     <Compile Include="Infrastructure\IBundleProvider.cs" />
     <Compile Include="Infrastructure\IBundleContext.cs" />
     <Compile Include="Infrastructure\IBundleResponse.cs" />

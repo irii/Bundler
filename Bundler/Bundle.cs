@@ -6,6 +6,8 @@ using Bundler.Internals;
 
 namespace Bundler {
     public class Bundle : IBundle {
+        private const string Tag = nameof(Bundle);
+
         protected readonly IBundleContentTransformer[] BundleContentTransformers;
 
         public string ContentType { get; }
@@ -64,6 +66,8 @@ namespace Bundler {
                 return true;
             }
 
+            Context.Diagnostic.Log(LogLevel.Debug, Tag, nameof(IncludeInternal), $"{source.VirtualFile} added to bundle.");
+
             // Register for auto refresh
             if (source.IsWatchable && Context.VirtualPathProvider.FileExists(source.VirtualFile)) {
                 Context.Watcher.Watch(source.VirtualFile, ChangeHandler);   
@@ -80,6 +84,7 @@ namespace Bundler {
                     IncludeInternal(source, newContainer);
                 }
 
+                Context.Diagnostic.Log(LogLevel.Info, Tag, nameof(Refresh), $"Bundle refreshed.");
                 return true;
             });
         }

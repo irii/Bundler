@@ -117,6 +117,10 @@ namespace Bundler {
             if (virtualPath.Contains("?")) {
                 throw new ArgumentException("Query arguments are not allowed!");
             }
+
+            if (virtualPath.Contains("../")) {
+                throw new ArgumentException("Only normalized paths are supported.");
+            }
         }
 
         private static string PrepareVirtualPath(string virtualPath) {

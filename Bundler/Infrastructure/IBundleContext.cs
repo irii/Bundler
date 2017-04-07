@@ -21,5 +21,10 @@ namespace Bundler.Infrastructure {
         /// Configuration
         /// </summary>
         IBundleConfiguration Configuration { get; }
+
+        /// <summary>
+        /// Logging
+        /// </summary>
+        IBundleDiagnostic Diagnostic { get; }
     }
 }

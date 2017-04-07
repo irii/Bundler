@@ -20,6 +20,7 @@ namespace Bundler.Infrastructure {
 
         /// <summary>
         /// Simulates a change event.
+        /// Note: Virtual should be registerd.
         /// </summary>
         /// <param name="virtualPath"></param>
         void InvokeChange(string virtualPath);

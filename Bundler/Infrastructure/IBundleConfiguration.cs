@@ -2,7 +2,6 @@
 
 namespace Bundler.Infrastructure {
     public interface IBundleConfiguration {
-        
         /// <summary>
         /// Returns the query parameter name of the version argument.
         /// </summary>
@@ -12,6 +11,14 @@ namespace Bundler.Infrastructure {
         /// Returns the query parameter name of the file argument.
         /// </summary>
         string FileQueryParameterName { get; }
+
+        /// <summary>
+        /// Get Property value
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        T GetValue<T>(Property<T> property);
 
         /// <summary>
         /// Optimization
@@ -48,5 +55,20 @@ namespace Bundler.Infrastructure {
         /// </summary>
         bool AutoRefresh { get; }
 
+    }
+
+    public struct Property<T> {
+        public Property(Guid identifier, string name) : this(identifier, name, default(T)) { }
+
+        public Property(Guid identifier, string name, T @default) {
+            Identifier = identifier;
+            Name = name;
+            Default = @default;
+        }
+        public Guid Identifier { get; }
+
+        public string Name { get; }
+
+        public T Default { get; }
     }
 }
