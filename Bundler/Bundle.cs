@@ -45,21 +45,25 @@ namespace Bundler {
                 return true;
             }
 
-            var fileContent = new BundleContentTransform(source.VirtualFile, source.Get());
-            if (fileContent.Content == null) {
+            var transformResult = new BundleContentTransform(source.VirtualFile, source.Get());
+            if (transformResult.Content == null) {
                 return false;
             }
 
-            var inputContent = fileContent.Content;
+            var inputContent = transformResult.Content;
 
-            var processResult = ProcessContent(fileContent);
+            var processResult = ProcessContent(transformResult);
             if (!processResult) {
+                var errors = string.Join("; ", transformResult.Errors);
+
+                Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(IncludeInternal),$"Failed to Process {source.VirtualFile}: {errors}");
                 if (!Context.Configuration.FallbackOnError) {
                     return false;
                 }
 
+                Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(IncludeInternal), $"Using fallback behaviour for {source.VirtualFile}");
             } else {
-                inputContent = fileContent.Content;
+                inputContent = transformResult.Content;
             }
 
             if (!container.Append(source, inputContent)) {

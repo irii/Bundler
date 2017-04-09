@@ -119,7 +119,7 @@ namespace Bundler {
             }
 
             if (virtualPath.Contains("../")) {
-                throw new ArgumentException("Only normalized paths are supported.");
+                throw new ArgumentException("Only normalized paths are allowed.");
             }
         }
 
