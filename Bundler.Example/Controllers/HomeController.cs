@@ -17,9 +17,13 @@ namespace Bundler.Example.Controllers {
             return View();
         }
 
-        public ActionResult Refresh() {
+        public ActionResult Refresh(string returnUrl = null) {
             foreach (var bundle in AspNet.AspNetBundler.Current.GetBundles()) {
                 bundle.Refresh();
+            }
+
+            if (Url.IsLocalUrl(returnUrl)) {
+                return Redirect(returnUrl);
             }
 
             return RedirectToAction(nameof(Index));

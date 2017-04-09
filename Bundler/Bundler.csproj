@@ -43,8 +43,8 @@
     <Compile Include="BundleFile.cs" />
     <Compile Include="BundleProvider.cs" />
     <Compile Include="BundleResponse.cs" />
-    <Compile Include="ContentSources\StringSource.cs" />
-    <Compile Include="ContentSources\StreamSource.cs" />
+    <Compile Include="Sources\StringSource.cs" />
+    <Compile Include="Sources\StreamSource.cs" />
     <Compile Include="Defaults\DebugBundleDiagnostic.cs" />
     <Compile Include="Defaults\DefaultBundleConfiguration.cs" />
     <Compile Include="Defaults\DefaultBundleFileWatcher.cs" />

@@ -2,6 +2,14 @@
 
 namespace Bundler.Infrastructure {
     public interface IBundleDiagnostic {
+        /// <summary>
+        /// Log
+        /// </summary>
+        /// <param name="logLevel"></param>
+        /// <param name="source"></param>
+        /// <param name="method"></param>
+        /// <param name="message"></param>
+        /// <param name="exception"></param>
         void Log(LogLevel logLevel, string source, string method, string message, Exception exception = null);
     }
 

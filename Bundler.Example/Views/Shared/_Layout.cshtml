@@ -34,6 +34,7 @@
         <hr />
         <footer>
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
+            <a href="@Url.Action("Refresh", "Home", new RouteValueDictionary {["returnUrl"] = Url.RouteUrl(ViewContext.RouteData.Values)})">Refresh Bundle</a>
         </footer>
     </div>
 

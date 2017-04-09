@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using Bundler.Infrastructure;
 
-namespace Bundler.ContentSources {
+namespace Bundler.Sources {
     public class StringSource : ISource {
         private readonly object _writeLock = new object();
         private string _content;

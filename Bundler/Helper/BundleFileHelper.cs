@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Bundler.ContentSources;
 using Bundler.Infrastructure;
+using Bundler.Sources;
 
 namespace Bundler.Helper {
     public static class BundleFileHelper {

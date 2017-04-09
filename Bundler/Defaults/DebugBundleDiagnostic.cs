@@ -12,7 +12,7 @@ namespace Bundler.Defaults {
         }
 
         public void Log(LogLevel logLevel, string source, string method, string message, Exception exception = null) {
-            if (logLevel < _requiredLogLevel) {
+            if (logLevel < _requiredLogLevel || _requiredLogLevel == LogLevel.None) {
                 return;
             }
 

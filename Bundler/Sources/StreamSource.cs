@@ -2,7 +2,7 @@
 using System.IO;
 using Bundler.Infrastructure;
 
-namespace Bundler.ContentSources {
+namespace Bundler.Sources {
     public class StreamSource : ISource {
         private readonly IBundleContext _bundleContext;
 
