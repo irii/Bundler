@@ -42,11 +42,13 @@ namespace Bundler {
             if (container == null) throw new ArgumentNullException(nameof(container));
 
             if (container.Exists(source.VirtualFile)) {
+                Context.Diagnostic.Log(LogLevel.Debug, Tag, nameof(IncludeInternal), $"{source.VirtualFile} is already added to the bundle.");
                 return true;
             }
 
             var transformResult = new BundleContentTransform(source.VirtualFile, source.Get());
             if (transformResult.Content == null) {
+                Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(IncludeInternal), $"Failed to read content from  {source.VirtualFile}");
                 return false;
             }
 
@@ -66,6 +68,7 @@ namespace Bundler {
                 inputContent = transformResult.Content;
             }
 
+            // Returns false only if file was already added.
             if (!container.Append(source, inputContent)) {
                 return true;
             }
@@ -85,7 +88,10 @@ namespace Bundler {
             return _container.Refresh((current, newContainer) => {
                 foreach (var file in current.Files) {
                     var source = current.Sources[file.Value];
-                    IncludeInternal(source, newContainer);
+                    if (!IncludeInternal(source, newContainer)) {
+                        Context.Diagnostic.Log(LogLevel.Info, Tag, nameof(Refresh), $"Failed to refresh bundle.");
+                        return false;
+                    }
                 }
 
                 Context.Diagnostic.Log(LogLevel.Info, Tag, nameof(Refresh), $"Bundle refreshed.");

@@ -16,6 +16,9 @@ namespace Bundler.Example.Application {
             _requestContext = requestContext;
         }
 
+        public IBundle ApplicationStyles => BundleConfig.StyleBundle;
+        public IBundle ApplicationScripts => BundleConfig.ScriptBundle;
+
         public IHtmlString Render(string virtualPath) => new MvcHtmlString(_bundleProvider.Render(virtualPath));
 
         private static string ResolveDynamicVirtualPath(RouteData routeData, string additionalIdentifier) {

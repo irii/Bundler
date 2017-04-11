@@ -43,25 +43,5 @@ namespace Bundler.AspNet {
         public string GetPhysicalPath(string virtualPath) {
             return HostingEnvironment.MapPath(virtualPath);
         }
-
-        public string GetVirtualPath(string absolutePath) {
-            if (absolutePath == null) throw new ArgumentNullException(nameof(absolutePath));
-            absolutePath = Path.GetFullPath(absolutePath);
-            if (!File.Exists(absolutePath) && !Directory.Exists(absolutePath)) {
-                throw new Exception($"File or Directory not found! {absolutePath}");
-            }
-
-            var root = new Uri(GetPhysicalPath("~/"), UriKind.Absolute);
-            var requestedPath = new Uri(absolutePath, UriKind.Absolute);
-
-            if (!requestedPath.AbsolutePath.StartsWith(root.AbsolutePath, StringComparison.InvariantCultureIgnoreCase)) {
-                throw new Exception("Can't resolve app dir.");
-            }
-
-            var basePath = requestedPath.AbsolutePath.Substring(root.AbsolutePath.Length);
-            
-            var virtualPath = ("~/" + basePath).Replace("\\", "/");
-            return virtualPath;
-        }
     }
 }

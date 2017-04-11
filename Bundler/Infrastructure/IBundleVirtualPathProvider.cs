@@ -45,12 +45,5 @@ namespace Bundler.Infrastructure {
         /// <param name="virtualPath"></param>
         /// <returns></returns>
         string GetPhysicalPath(string virtualPath);
-
-        /// <summary>
-        /// Returns the virtual path.
-        /// </summary>
-        /// <param name="absolutePath"></param>
-        /// <returns></returns>
-        string GetVirtualPath(string absolutePath);
     }
 }

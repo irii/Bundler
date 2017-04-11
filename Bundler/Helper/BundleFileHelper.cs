@@ -10,8 +10,9 @@ namespace Bundler.Helper {
         /// </summary>
         /// <param name="bundle"></param>
         /// <param name="virtualFile"></param>
+        /// <param name="throwExceptionOnError"></param>
         /// <returns></returns>
-        public static IBundle AddFile(this IBundle bundle, string virtualFile) {
+        public static IBundle AddFile(this IBundle bundle, string virtualFile, bool throwExceptionOnError = false) {
             if (bundle == null) throw new ArgumentNullException(nameof(bundle));
             if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
 
@@ -24,7 +25,12 @@ namespace Bundler.Helper {
             }
             
             var fileContent = new StreamSource(bundle.Context, virtualFile);
-            bundle.Include(fileContent);
+            var includeResult = bundle.Include(fileContent);
+
+            if (!includeResult && throwExceptionOnError) {
+                throw new Exception($"Failed to add '{virtualFile}' to the bundle.");
+            }
+
             return bundle;
         }
     }

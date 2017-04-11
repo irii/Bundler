@@ -25,15 +25,15 @@ namespace Bundler.Example {
             }
 
             // Scripts
-            ScriptBundle.AddFile("~/Scripts/jquery-1.10.2.js")
-                .AddFile("~/Scripts/jquery.validate.js")
-                .AddFile("~/Scripts/modernizr-2.6.2.js")
-                .AddFile("~/Scripts/bootstrap.js")
-                .AddFile("~/Scripts/respond.js");
+            ScriptBundle.AddFile("~/Scripts/jquery-1.10.2.js", true)
+                .AddFile("~/Scripts/jquery.validate.js", true)
+                .AddFile("~/Scripts/modernizr-2.6.2.js", true)
+                .AddFile("~/Scripts/bootstrap.js", true)
+                .AddFile("~/Scripts/respond.js", true);
 
             // Styles
-            StyleBundle.AddFile("~/Content/bootstrap.css")
-                .AddFile("~/Content/site.css");
+            StyleBundle.AddFile("~/Content/bootstrap.css", true)
+                .AddFile("~/Content/site.css", true);
         }
     }
 }
