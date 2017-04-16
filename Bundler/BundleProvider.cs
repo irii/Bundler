@@ -98,7 +98,7 @@ namespace Bundler {
             var sB = new StringBuilder();
             foreach (var file in response.Files) {
                 sB.AppendLine(bundle.Render(bundle.Context.UrlHelper.ToAbsolute(virtualPath)
-                    + $"?{Context.Configuration.FileQueryParameterName}={bundle.Context.UrlHelper.Encode(file.Key)}&={Context.Configuration.VersionQueryParameterName}={response.ContentHash}"));
+                    + $"?{Context.Configuration.FileQueryParameterName}={bundle.Context.UrlHelper.Encode(file.Key)}&{Context.Configuration.VersionQueryParameterName}={response.ContentHash}"));
             }
 
             return sB.ToString();

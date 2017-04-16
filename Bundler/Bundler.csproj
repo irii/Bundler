@@ -43,6 +43,10 @@
     <Compile Include="BundleFile.cs" />
     <Compile Include="BundleProvider.cs" />
     <Compile Include="BundleResponse.cs" />
+    <Compile Include="Helper\EnumerableHelper.cs" />
+    <Compile Include="Comparers\SourceEqualityComparer.cs" />
+    <Compile Include="Comparers\SourceItemEqualityComparer.cs" />
+    <Compile Include="Sources\DirectorySource.cs" />
     <Compile Include="Sources\StringSource.cs" />
     <Compile Include="Sources\StreamSource.cs" />
     <Compile Include="Defaults\DebugBundleDiagnostic.cs" />
@@ -53,8 +57,8 @@
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Bundle.cs" />
     <Compile Include="Helper\ConfigurationValidator.cs" />
-    <Compile Include="Infrastructure\BundleContentTransform.cs" />
-    <Compile Include="Infrastructure\FileChangedDelegate.cs" />
+    <Compile Include="Infrastructure\BundleTransformItem.cs" />
+    <Compile Include="Infrastructure\SourceChangedDelegate.cs" />
     <Compile Include="Infrastructure\IBundle.cs" />
     <Compile Include="Infrastructure\IBundleConfiguration.cs" />
     <Compile Include="Infrastructure\IBundleFileWatcher.cs" />
@@ -65,7 +69,6 @@
     <Compile Include="Infrastructure\IBundleUrlHelper.cs" />
     <Compile Include="Infrastructure\IBundleVirtualPathProvider.cs" />
     <Compile Include="Infrastructure\ISource.cs" />
-    <Compile Include="Internals\Container.cs" />
     <Compile Include="Infrastructure\IBundleContentTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

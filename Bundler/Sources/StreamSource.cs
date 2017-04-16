@@ -1,32 +1,48 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Bundler.Infrastructure;
 
 namespace Bundler.Sources {
     public class StreamSource : ISource {
-        private readonly IBundleContext _bundleContext;
-
-        public bool IsWatchable { get; } = true;
-
-        public StreamSource(IBundleContext bundleContext, string virtualFile) {
-            _bundleContext = bundleContext;
-            VirtualFile = virtualFile;
+        public StreamSource(string virtualFile) {
+            Identifier = virtualFile;
         }
 
-        public string VirtualFile { get; }
+        public void Dispose() { }
 
-        public string Get() {
-            try {
-                using (var stream = _bundleContext.VirtualPathProvider.Open(VirtualFile)) {
-                    using (var streamReader = new StreamReader(stream)) {
-                        return streamReader.ReadToEnd();
-                    }
-                }
-            } catch (Exception) {
-                return null;
+        public bool AddItems(IBundleContext bundleContext, ICollection<ISourceItem> items, ICollection<string> watchPaths) {
+            items.Add(new StreamSourceItem(Identifier, bundleContext.VirtualPathProvider));
+            watchPaths.Add(Identifier);
+
+            return true;
+        }
+
+        public string Identifier { get; }
+
+        private class StreamSourceItem : ISourceItem {
+            private readonly IBundleVirtualPathProvider _virtualPathProvider;
+
+            public StreamSourceItem(string virtualFile, IBundleVirtualPathProvider virtualPathProvider) {
+                _virtualPathProvider = virtualPathProvider;
+                VirtualFile = virtualFile;
             }
-        }
 
-        public void Dispose() {}
+            public string VirtualFile { get; }
+
+            public string Get() {
+                try {
+                    using (var stream = _virtualPathProvider.Open(VirtualFile)) {
+                        using (var streamReader = new StreamReader(stream)) {
+                            return streamReader.ReadToEnd();
+                        }
+                    }
+                } catch (Exception) {
+                    return null;
+                }
+            }
+
+            public void Dispose() {}
+        }
     }
 }

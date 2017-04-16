@@ -28,7 +28,7 @@ namespace Bundler.Defaults {
             _virtualPathProvider = virtualPathProvider;
             _fileSystemWatcher = new FileSystemWatcher(virtualPathProvider.GetPhysicalPath("~/")) {
                 IncludeSubdirectories = true,
-                NotifyFilter = NotifyFilters.LastWrite
+                NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.DirectoryName
             };
 
             _fileSystemWatcher.Changed += FileSystemWatcher_Event;
@@ -84,7 +84,7 @@ namespace Bundler.Defaults {
             }
         }
 
-        public void Watch(string virtualPath, FileChangedDelegate callback) {
+        public void Watch(string virtualPath, SourceChangedDelegate callback) {
             if (virtualPath == null) throw new ArgumentNullException(nameof(virtualPath));
             if (callback == null) throw new ArgumentNullException(nameof(callback));
 
@@ -102,7 +102,7 @@ namespace Bundler.Defaults {
             }
         }
 
-        public void Unwatch(string virtualPath, FileChangedDelegate callback) {
+        public void Unwatch(string virtualPath, SourceChangedDelegate callback) {
             if (virtualPath == null) throw new ArgumentNullException(nameof(virtualPath));
             if (callback == null) throw new ArgumentNullException(nameof(callback));
 
@@ -143,8 +143,8 @@ namespace Bundler.Defaults {
             private readonly int _resetCounter;
             private readonly object _writeLock = new object();
 
-            private readonly List<FileChangedDelegate> _subscribers = new List<FileChangedDelegate>();
-            public IReadOnlyCollection<FileChangedDelegate> Subscribers => _subscribers;
+            private readonly List<SourceChangedDelegate> _subscribers = new List<SourceChangedDelegate>();
+            public IReadOnlyCollection<SourceChangedDelegate> Subscribers => _subscribers;
 
             public string VirtualPath { get; }
 
@@ -154,17 +154,17 @@ namespace Bundler.Defaults {
                 VirtualPath = virtualPath;
             }
 
-            public void Add(FileChangedDelegate fileChangedDelegate) {
+            public void Add(SourceChangedDelegate sourceChangedDelegate) {
                 lock (_writeLock) {
-                    if (!_subscribers.Contains(fileChangedDelegate)) {
-                        _subscribers.Add(fileChangedDelegate);
+                    if (!_subscribers.Contains(sourceChangedDelegate)) {
+                        _subscribers.Add(sourceChangedDelegate);
                     }
                 }
             }
 
-            public void Remove(FileChangedDelegate fileChangedDelegate) {
+            public void Remove(SourceChangedDelegate sourceChangedDelegate) {
                 lock (_writeLock) {
-                    _subscribers.Remove(fileChangedDelegate);
+                    _subscribers.Remove(sourceChangedDelegate);
                 }
             }
 

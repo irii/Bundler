@@ -14,11 +14,11 @@ namespace Bundler.Infrastructure {
         IBundleResponse GetResponse();
 
         /// <summary>
-        /// Includes a new file to the Bundle
+        /// Adds a new content source to the Bundle
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        bool Include(ISource source);
+        bool Add(ISource source);
 
         /// <summary>
         /// Refreshes the bundle.
@@ -28,7 +28,7 @@ namespace Bundler.Infrastructure {
         /// <summary>
         /// Handler callback for custom dependencies.
         /// </summary>
-        FileChangedDelegate ChangeHandler { get; }
+        SourceChangedDelegate ChangeHandler { get; }
 
         /// <summary>
         /// Renders a bundle specific tag.

@@ -24,8 +24,8 @@ namespace Bundler.Helper {
                 throw new FileNotFoundException("Can't find file", virtualFile);
             }
             
-            var fileContent = new StreamSource(bundle.Context, virtualFile);
-            var includeResult = bundle.Include(fileContent);
+            var fileContent = new StreamSource(virtualFile);
+            var includeResult = bundle.Add(fileContent);
 
             if (!includeResult && throwExceptionOnError) {
                 throw new Exception($"Failed to add '{virtualFile}' to the bundle.");

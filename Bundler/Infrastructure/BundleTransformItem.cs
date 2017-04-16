@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 
 namespace Bundler.Infrastructure {
-    public class BundleContentTransform {
+    public class BundleTransformItem {
 
-        public BundleContentTransform(string virtualPath, string inputContent) {
+        public BundleTransformItem(string virtualPath, string inputContent) {
             VirtualPath = virtualPath;
             Content = inputContent;
         }

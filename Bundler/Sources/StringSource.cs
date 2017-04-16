@@ -1,4 +1,6 @@
-﻿using System.Threading;
+﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using Bundler.Infrastructure;
 
 namespace Bundler.Sources {
@@ -6,14 +8,16 @@ namespace Bundler.Sources {
         private readonly object _writeLock = new object();
         private string _content;
 
+        private readonly ISourceItem _stringSourceItem;
+
         public StringSource(string virtualFile, string content) {
-            VirtualFile = virtualFile;
             Content = content;
+            Identifier = virtualFile;
+
+            _stringSourceItem = new StringSourceItem(virtualFile, () => Content);
         }
 
-        public bool IsWatchable { get; } = false;
-
-        public string VirtualFile { get; }
+        public string Identifier { get; }
 
         public string Content {
             get { return _content; }
@@ -27,11 +31,26 @@ namespace Bundler.Sources {
                 }
             }
         }
+        
+        public void Dispose() {}
 
-        public string Get() {
-            return Content;
+        public bool AddItems(IBundleContext bundleContext, ICollection<ISourceItem> items, ICollection<string> watchPaths) {
+            items.Add(_stringSourceItem);
+            return true;
         }
 
-        public void Dispose() {}
+
+        private class StringSourceItem : ISourceItem {
+            private readonly Func<string> _getContentFunc;
+
+            public StringSourceItem(string virtualFile, Func<string> getContentFunc) {
+                VirtualFile = virtualFile;
+                _getContentFunc = getContentFunc;
+            }
+
+            public string VirtualFile { get; }
+            public string Get() => _getContentFunc();
+            public void Dispose() {}
+        }
     }
 }

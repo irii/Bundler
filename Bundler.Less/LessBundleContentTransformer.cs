@@ -10,32 +10,32 @@ namespace Bundler.Less {
     public class LessBundleContentTransformer : IBundleContentTransformer {
         void IDisposable.Dispose() { }
         
-        protected virtual ILessEngine GetLessEngine(IBundle bundle, BundleContentTransform bundleContentTransformResult) {
+        protected virtual ILessEngine GetLessEngine(IBundle bundle, BundleTransformItem bundleTransformItemResult) {
             var parser = new Parser(new PlainStylizer(), new Importer(new DotLessVirtualFileReader(bundle.Context.VirtualPathProvider)));
             
             var lessEngine = new LessEngine(parser, new DotLessBundleLogger(bundle.Context.Diagnostic), bundle.Context.Configuration.Optimization, !bundle.Context.Configuration.Optimization) {
-                CurrentDirectory = Path.GetDirectoryName(bundleContentTransformResult.VirtualPath)
+                CurrentDirectory = Path.GetDirectoryName(bundleTransformItemResult.VirtualPath)
             };
             
             return lessEngine;
         }
         
-        bool IBundleContentTransformer.Process(IBundle bundle, BundleContentTransform bundleContentTransformResult) {
-            if (string.IsNullOrWhiteSpace(bundleContentTransformResult.Content)) {
-                bundleContentTransformResult.Content = string.Empty;
+        bool IBundleContentTransformer.Process(IBundle bundle, BundleTransformItem bundleTransformItemResult) {
+            if (string.IsNullOrWhiteSpace(bundleTransformItemResult.Content)) {
+                bundleTransformItemResult.Content = string.Empty;
                 return true;
             }
 
-            var lessEngine = GetLessEngine(bundle, bundleContentTransformResult);
+            var lessEngine = GetLessEngine(bundle, bundleTransformItemResult);
 
             try {
-                var transformedContent = lessEngine.TransformToCss(bundleContentTransformResult.Content, null) ?? string.Empty;
+                var transformedContent = lessEngine.TransformToCss(bundleTransformItemResult.Content, null) ?? string.Empty;
                 if (!lessEngine.LastTransformationSuccessful) {
-                    bundleContentTransformResult.Errors.Add($"Failed to process less/css file {bundleContentTransformResult.VirtualPath}");
+                    bundleTransformItemResult.Errors.Add($"Failed to process less/css file {bundleTransformItemResult.VirtualPath}");
                     return false;
                 }
 
-                bundleContentTransformResult.Content = transformedContent;
+                bundleTransformItemResult.Content = transformedContent;
 
                 // Register dependencies
                 var imports = lessEngine.GetImports();
@@ -45,7 +45,7 @@ namespace Bundler.Less {
 
                 return true;
             } catch (Exception ex) {
-                bundleContentTransformResult.Errors.Add(ex.Message);
+                bundleTransformItemResult.Errors.Add(ex.Message);
                 return false;
             }
         }

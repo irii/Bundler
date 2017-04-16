@@ -1,19 +1,31 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Bundler.Infrastructure {
-    public interface ISource : IDisposable {
+    public interface ISource {
         /// <summary>
-        /// Is Source watchable by BundleFileWatcher
+        /// Returns a hashcode or a unique string which represents the source configuration.
         /// </summary>
-        bool IsWatchable { get; }
+        string Identifier { get; }
 
         /// <summary>
-        /// Virtual contentSource
+        /// Adds a list of all items which should be added to the bundle.
+        /// </summary>
+        /// <param name="bundleContext"></param>
+        /// <param name="items"></param>
+        /// <param name="watchPaths">List of paths which should be used for the file system watcher</param>
+        /// <returns></returns>
+        bool AddItems(IBundleContext bundleContext, ICollection<ISourceItem> items, ICollection<string> watchPaths);
+    }
+
+    public interface ISourceItem : IDisposable {
+        /// <summary>
+        /// Virtual path of the item.
         /// </summary>
         string VirtualFile { get; }
 
         /// <summary>
-        /// Returns the actual contentSource content
+        /// Returns the content of the item.
         /// </summary>
         /// <returns></returns>
         string Get();
