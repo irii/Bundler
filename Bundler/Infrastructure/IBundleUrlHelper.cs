@@ -5,7 +5,7 @@ namespace Bundler.Infrastructure {
         string ToAbsolute(string virtualUrl);
 
         /// <summary>
-        /// Returns a case insensetive dictionary with all query parameters
+        /// Returns dictionary with all query parameters
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>
