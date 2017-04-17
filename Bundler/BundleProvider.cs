@@ -131,7 +131,7 @@ namespace Bundler {
             return '~' + virtualPath;
         }
 
-        public IReadOnlyCollection<IBundle> GetBundles() => _currentBundleMappings.Paths.Values.ToList();
+        public IEnumerable<IBundle> GetBundles() => _currentBundleMappings.Paths.Values;
 
         private class BundleMappings {
             private static readonly IEqualityComparer<string> PathComparer = StringComparer.InvariantCultureIgnoreCase;

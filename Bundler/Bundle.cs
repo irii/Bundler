@@ -54,22 +54,7 @@ namespace Bundler {
                 }
             };
         }
-
-        private BundleTransformItem ProcessContent(ISourceItem sourceItem) {
-            var bundleTransformItem = new BundleTransformItem(sourceItem.VirtualFile, sourceItem.Get());
-            if (bundleTransformItem.Content == null) {
-                bundleTransformItem.Content = string.Empty;
-                bundleTransformItem.Errors.Add("Failed to get content");
-                return bundleTransformItem;
-            }
-
-            if (!BundleContentTransformers.All(t => t.Process(this, bundleTransformItem))) {
-                bundleTransformItem.Errors.Add("Failed to process");
-            }
-
-            return bundleTransformItem;
-        }
-
+        
         public bool Add(ISource source) {
             if (_bundleState.Sources.Contains(source, SourceEqualityComparer.Default)) {
                 return true;
@@ -94,7 +79,7 @@ namespace Bundler {
         }
 
         private BundleState CreateBundleState(IReadOnlyCollection<ISource> sources) {
-            var items = new HashSet<ISourceItem>();
+            var items = new HashSet<ISourceItem>(SourceItemEqualityComparer.Default);
             var watchPaths = new HashSet<string>(StringComparer.InvariantCultureIgnoreCase);
 
             foreach (var containerSource in sources) {
@@ -140,13 +125,23 @@ namespace Bundler {
         private BundleTransformItem TransformItem(ISourceItem sourceItem) {
             if (sourceItem == null) throw new ArgumentNullException(nameof(sourceItem));
 
-            var processResult = ProcessContent(sourceItem);
-
-            if (processResult.Errors.Count == 0) {
-                return processResult;
+            var inputContent = sourceItem.Get();
+            var bundleTransformItem = new BundleTransformItem(sourceItem.VirtualFile, inputContent);
+            if (bundleTransformItem.Content == null) {
+                bundleTransformItem.Content = string.Empty;
+                bundleTransformItem.Errors.Add("Failed to get content");
+                return bundleTransformItem;
             }
 
-            var errors = string.Join("; ", processResult.Errors);
+            if (!BundleContentTransformers.All(t => t.Process(this, bundleTransformItem))) {
+                bundleTransformItem.Errors.Add("Failed to process");
+            }
+            
+            if (bundleTransformItem.Errors.Count == 0) {
+                return bundleTransformItem;
+            }
+
+            var errors = string.Join("; ", bundleTransformItem.Errors);
 
             Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(TransformItem),$"Failed to Process {sourceItem.VirtualFile}: {errors}");
             if (!Context.Configuration.FallbackOnError) {
@@ -155,14 +150,14 @@ namespace Bundler {
 
             Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(TransformItem), $"Using fallback behaviour for {sourceItem.VirtualFile}");
 
-            processResult.Content = sourceItem.Get();
-            if (processResult.Content == null) {
+            bundleTransformItem.Content = sourceItem.Get();
+            if (bundleTransformItem.Content == null) {
                 Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(TransformItem), $"Using fallback failed for {sourceItem.VirtualFile}");
                 return null;
             }
 
-            processResult.Errors.Clear();
-            return processResult;
+            bundleTransformItem.Errors.Clear();
+            return bundleTransformItem;
         }
 
 

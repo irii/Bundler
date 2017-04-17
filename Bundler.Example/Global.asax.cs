@@ -17,7 +17,7 @@ namespace Bundler.Example {
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
             var bundleContext = new AspNetBundleContext(new DefaultBundleConfiguration {
-                BundleFiles = false,
+                BundleFiles = true,
                 Optimization = true,
                 Cache = true,
                 AutoRefresh = true,

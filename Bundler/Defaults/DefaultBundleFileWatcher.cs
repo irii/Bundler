@@ -8,7 +8,7 @@ using Bundler.Infrastructure;
 
 namespace Bundler.Defaults {
     /// <summary>
-    /// TODO: Do not depend on physical location (virtual directories...)
+    /// DefaultBundleFileWatcher
     /// </summary>
     public class DefaultBundleFileWatcher : IBundleFileWatcher {
         private const string Tag = nameof(DefaultBundleFileWatcher);
@@ -63,20 +63,17 @@ namespace Bundler.Defaults {
 
         private void GroupingTask() {
             while (_fileSystemWatcher.EnableRaisingEvents) {
-                ICollection<FileChangeEventInfo> files;
                 lock (_fileSyncLock) {
-                    files = _files.Values.ToList();
-                }
+                    foreach (var fileChangeEventInfo in _files.Values.Where(x => x.Counter > 0)) {
+                        fileChangeEventInfo.DecreaseCounter();
 
-                foreach (var fileChangeEventInfo in files.Where(x => x.Counter > 0)) {
-                    fileChangeEventInfo.DecreaseCounter();
+                        if (fileChangeEventInfo.Counter > 0) {
+                            continue;
+                        }
 
-                    if (fileChangeEventInfo.Counter > 0) {
-                        continue;
-                    }
-                    
-                    foreach (var subscriber in fileChangeEventInfo.Subscribers) {
-                        subscriber(fileChangeEventInfo.VirtualPath);
+                        foreach (var subscriber in fileChangeEventInfo.Subscribers) {
+                            subscriber(fileChangeEventInfo.VirtualPath);
+                        }
                     }
                 }
 
