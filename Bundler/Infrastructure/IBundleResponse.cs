@@ -33,6 +33,6 @@ namespace Bundler.Infrastructure {
         /// <summary>
         /// LastModification (UTC)
         /// </summary>
-        DateTime LastModification { get; }
+        DateTimeOffset LastModification { get; }
     }
 }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using Bundler.Infrastructure;
@@ -92,7 +91,7 @@ namespace Bundler {
             var response = bundle.GetResponse();
             
             if (bundle.Context.Configuration.BundleFiles) {
-                return bundle.Render(bundle.Context.UrlHelper.ToAbsolute(virtualPath) + $"?={Context.Configuration.VersionQueryParameterName}={response.ContentHash}");
+                return bundle.Render(bundle.Context.UrlHelper.ToAbsolute(virtualPath) + $"?{Context.Configuration.VersionQueryParameterName}={response.ContentHash}");
             }
             
             var sB = new StringBuilder();

@@ -95,10 +95,10 @@ namespace Bundler {
 
             var responseContent = string.Join(_placeholder, transformResults.Select(x => x.Content));
             var fileRespones = transformResults
-                .Select(x => new BundleFile(x.VirtualPath, ContentType, GetContentHash(x.Content), x.Content, DateTime.Now))
+                .Select(x => new BundleFile(x.VirtualPath, ContentType, GetContentHash(x.Content), x.Content, DateTime.UtcNow))
                 .ToDictionary(x => x.VirtualFile, x => (IBundleContentResponse)x, StringComparer.InvariantCultureIgnoreCase);
 
-            var bundleResponse = new BundleResponse(ContentType, GetContentHash(responseContent), DateTime.Now, responseContent, fileRespones, new Dictionary<string, string>(0));
+            var bundleResponse = new BundleResponse(ContentType, GetContentHash(responseContent), DateTime.UtcNow, responseContent, fileRespones, new Dictionary<string, string>(0));
 
             var bundleState = new BundleState(sources.ToArray(), watchPaths.ToArray(), bundleResponse);
             return bundleState;
@@ -197,7 +197,7 @@ namespace Bundler {
             public IBundleResponse Response { get; }
 
             public static BundleState CreateEmpty(string contentType) => new BundleState(new ISource[0], new string[0], new BundleResponse(contentType, string.Empty.GetHashCode().ToString(),
-                DateTime.Now, string.Empty, new Dictionary<string, IBundleContentResponse>(), new Dictionary<string, string>()));
+                DateTime.UtcNow, string.Empty, new Dictionary<string, IBundleContentResponse>(), new Dictionary<string, string>()));
         }
 
         private static string GetContentHash(string input) {
