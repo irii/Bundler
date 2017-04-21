@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Bundler.Infrastructure;
+﻿using Bundler.Infrastructure;
 
 namespace Bundler.Less {
     public static class LessStyles {
@@ -8,8 +7,8 @@ namespace Bundler.Less {
 
         private const string PlaceHolder = "\r\n";
 
-        public static IBundle CreateLessBundle(this IBundleProvider bundleProvider, params IBundleContentTransformer[] additionalContentTransformers) {
-            return new Bundle(bundleProvider.Context, ContentType, PlaceHolder, TagFormat, new[] { new LessBundleContentTransformer() }.Union(additionalContentTransformers).ToArray());
+        public static BundleBuilder CreateLessBundle(this IBundleProvider bundleProvider) {
+            return new BundleBuilder(bundleProvider.Context, ContentType, PlaceHolder, TagFormat).AddContentTransformer(new LessBundleContentTransformer());
         }
     }
 }

@@ -14,21 +14,16 @@ namespace Bundler.Infrastructure {
         IBundleResponse GetResponse();
 
         /// <summary>
-        /// Adds a new content source to the Bundle
+        /// Adds new content sources to the Bundle
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="sources"></param>
         /// <returns></returns>
-        bool Add(ISource source);
+        bool Add(params ISource[] sources);
 
         /// <summary>
         /// Refreshes the bundle.
         /// </summary>
         bool Refresh();
-
-        /// <summary>
-        /// Handler callback for custom dependencies.
-        /// </summary>
-        SourceChangedDelegate ChangeHandler { get; }
 
         /// <summary>
         /// Renders a bundle specific tag.

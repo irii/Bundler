@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using Bundler.Infrastructure;
 using Bundler.Sources;
 
@@ -10,25 +9,26 @@ namespace Bundler.Helper {
         /// </summary>
         /// <param name="bundle"></param>
         /// <param name="virtualFile"></param>
-        /// <param name="throwExceptionOnError"></param>
         /// <returns></returns>
-        public static IBundle AddFile(this IBundle bundle, string virtualFile, bool throwExceptionOnError = false) {
+        public static IBundle AddFile(this IBundle bundle, string virtualFile) {
+            return AddFiles(bundle, new[] {virtualFile});
+        }
+
+        /// <summary>
+        /// Adds multiple files to the bundle.
+        /// </summary>
+        /// <param name="bundle"></param>
+        /// <param name="virtualFiles"></param>
+        /// <returns></returns>
+        public static IBundle AddFiles(this IBundle bundle, string[] virtualFiles) {
             if (bundle == null) throw new ArgumentNullException(nameof(bundle));
-            if (virtualFile == null) throw new ArgumentNullException(nameof(virtualFile));
+            if (virtualFiles == null) throw new ArgumentNullException(nameof(virtualFiles));
 
-            if (!virtualFile.StartsWith("~/", StringComparison.InvariantCultureIgnoreCase)) {
-                throw new ArgumentException("Path should be virtual!");
-            }
-
-            if (!bundle.Context.VirtualPathProvider.FileExists(virtualFile)) {
-                throw new FileNotFoundException("Can't find file", virtualFile);
-            }
-            
-            var fileContent = new StreamSource(virtualFile);
+            var fileContent = new StreamSource(virtualFiles);
             var includeResult = bundle.Add(fileContent);
 
-            if (!includeResult && throwExceptionOnError) {
-                throw new Exception($"Failed to add '{virtualFile}' to the bundle.");
+            if (!includeResult) {
+                throw new Exception($"Failed to add '{string.Join("; ", virtualFiles)}' to the bundle.");
             }
 
             return bundle;

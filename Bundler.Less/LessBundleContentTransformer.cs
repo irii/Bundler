@@ -38,9 +38,8 @@ namespace Bundler.Less {
                 bundleTransformItemResult.Content = transformedContent;
 
                 // Register dependencies
-                var imports = lessEngine.GetImports();
-                foreach (var import in imports) {
-                    bundle.Context.Watcher.Watch(import, bundle.ChangeHandler);
+                foreach (var import in lessEngine.GetImports()) {
+                    bundleTransformItemResult.WatchPaths.Add(import);
                 }
 
                 return true;

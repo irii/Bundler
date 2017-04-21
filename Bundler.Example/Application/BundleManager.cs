@@ -4,10 +4,14 @@ using System.Web.Mvc;
 using System.Web.Routing;
 using Bundler.Helper;
 using Bundler.Infrastructure;
+using Bundler.JavaScript;
 using Bundler.Less;
 
 namespace Bundler.Example.Application {
     public class BundleManager {
+        private readonly Func<IBundleProvider, IBundle> _createStyleBundle = (bundleProvider) => bundleProvider.CreateLessBundle().Create();
+        private readonly Func<IBundleProvider, IBundle> _createScriptBundle = (bundleProvider) => bundleProvider.CreateScriptBundle().Create();
+
         private readonly RequestContext _requestContext;
 
         public BundleManager(IBundleProvider provider, RequestContext requestContext) {
@@ -37,10 +41,10 @@ namespace Bundler.Example.Application {
             return $"~/Dynamic/{controller}/{action}/{typeIdentifier}";
         }
 
-        private IBundle ResolveBundle(string virtualPath) {
+        private IBundle ResolveBundle(string virtualPath, Func<IBundleProvider, IBundle> bundleFactory) {
             IBundle bundle;
             if (!Provider.Get(virtualPath, out bundle)) {
-                Provider.Add(virtualPath, Provider.CreateLessBundle());
+                Provider.Add(virtualPath, bundleFactory(Provider));
 
                 if (!Provider.Get(virtualPath, out bundle)) {
                     throw new Exception($"Failed to create bundle. ({virtualPath})");
@@ -68,7 +72,7 @@ namespace Bundler.Example.Application {
             var virtualPath = ResolveDynamicVirtualPath(_requestContext.RouteData, "Scripts");
             if (virtualPath == null) { return; }
 
-            var bundle = ResolveBundle(virtualPath);
+            var bundle = ResolveBundle(virtualPath, _createScriptBundle);
             bundle.AddFile(scriptFile);
         }
 
@@ -76,7 +80,7 @@ namespace Bundler.Example.Application {
             var virtualPath = ResolveDynamicVirtualPath(_requestContext.RouteData, "Styles");
             if (virtualPath == null) { return; }
 
-            var bundle = ResolveBundle(virtualPath);
+            var bundle = ResolveBundle(virtualPath, _createStyleBundle);
             bundle.AddFile(cssFile);
         }
     }

@@ -5,7 +5,6 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
 using Bundler.Comparers;
-using Bundler.Helper;
 using Bundler.Infrastructure;
 
 namespace Bundler {
@@ -29,17 +28,19 @@ namespace Bundler {
                     return false;
                 }
 
+                var oldBundleSate = _bundleState;
+
                 // Set new bundle state
                 Interlocked.Exchange(ref _bundleState, newBundleState);
 
                 // Configurate new bundle state
-                ConfigurateBundleStateUpdate(_bundleState, newBundleState);
+                ConfigurateBundleStateUpdate(oldBundleSate, newBundleState);
 
                 return true;
             }
         }
 
-        public Bundle(IBundleContext bundleContext, string contentType, string placeholder, string tagFormat, params IBundleContentTransformer[] contentTransformers) {
+        public Bundle(IBundleContext bundleContext, string contentType, string placeholder, string tagFormat, IBundleContentTransformer[] contentTransformers) {
             _placeholder = placeholder;
             Context = bundleContext;
             BundleContentTransformers = contentTransformers?.ToArray() ?? new IBundleContentTransformer[0];
@@ -47,32 +48,37 @@ namespace Bundler {
             TagFormat = tagFormat;
 
             _bundleState = BundleState.CreateEmpty(ContentType);
-
-            ChangeHandler = path => {
-                if (Context.Configuration.AutoRefresh) {
-                    Refresh();
-                }
-            };
         }
-        
-        public bool Add(ISource source) {
-            if (_bundleState.Sources.Contains(source, SourceEqualityComparer.Default)) {
+
+        private void ChangeHandler(string virtualPath) {
+            // TODO: Wait for more events
+            if (Context.Configuration.AutoRefresh) {
+                Refresh();
+            }
+        }
+
+        public bool Add(params ISource[] sources) {
+            if (sources.All(x => _bundleState.Sources.Contains(x, SourceEqualityComparer.Default))) {
                 return true;
             }
             
             var success = TryUpdateBundleState(() => {
-                if (_bundleState.Sources.Contains(source, SourceEqualityComparer.Default)) {
+                var missingSources = sources
+                    .Where(x => !_bundleState.Sources.Contains(x, SourceEqualityComparer.Default))
+                    .ToList();
+
+                if (missingSources.Count == 0) {
                     // Don't update reuse current bundle state.
                     return _bundleState;
                 }
-
-                return CreateBundleState(_bundleState.Sources.Union(source).ToList());
+                
+                return CreateBundleState(_bundleState.Sources.Union(missingSources).ToList());
             });
 
             if (success) {
-                Context.Diagnostic.Log(LogLevel.Debug, Tag, nameof(Add), $"Added new source {source.Identifier}");
+                Context.Diagnostic.Log(LogLevel.Debug, Tag, nameof(Add), $"Added new sources {string.Join("; ", sources.Select(x => x.Identifier))}");
             } else {
-                Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(Add), $"Failed to add new source {source.Identifier}");
+                Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(Add), $"Failed to add new sources {string.Join("; ", sources.Select(x => x.Identifier))}");
             }
 
             return success;
@@ -92,6 +98,9 @@ namespace Bundler {
             if (transformResults.Any(x => x == null || x.Errors.Count > 0)) {
                 return null;
             }
+
+            // Join watch paths
+            watchPaths.UnionWith(transformResults.SelectMany(x => x.WatchPaths));
 
             var responseContent = string.Join(_placeholder, transformResults.Select(x => x.Content));
             var fileRespones = transformResults
@@ -178,8 +187,6 @@ namespace Bundler {
             // Make conatiner empty to lose all dependencies
             TryUpdateBundleState(() => BundleState.CreateEmpty(ContentType));
         }
-
-        public SourceChangedDelegate ChangeHandler { get; }
 
         public string Render(string url) {
             return string.Format(TagFormat, url);

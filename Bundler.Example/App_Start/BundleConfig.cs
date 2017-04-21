@@ -1,5 +1,4 @@
 ﻿using System;
-using Bundler.Helper;
 using Bundler.Infrastructure;
 using Bundler.JavaScript;
 using Bundler.Less;
@@ -13,9 +12,27 @@ namespace Bundler.Example {
         public static IBundle StyleBundle { get; private set; }
 
         public static void SetupBundler(IBundleProvider bundleProvider) {
-            ScriptBundle = bundleProvider.CreateScriptBundle(async: false);
-            StyleBundle = bundleProvider.CreateLessBundle();
+            var scriptBundleBuilder = bundleProvider.CreateScriptBundle(async: false);
+            var styleBundleBuilder = bundleProvider.CreateLessBundle();
 
+            // Scripts
+            scriptBundleBuilder
+                .AddFile("~/Scripts/jquery-1.10.2.js")
+                .AddFile("~/Scripts/jquery.validate.js")
+                .AddFile("~/Scripts/modernizr-2.6.2.js")
+                .AddFile("~/Scripts/bootstrap.js")
+                .AddFile("~/Scripts/respond.js");
+
+            // Styles
+            styleBundleBuilder
+                .AddFile("~/Content/bootstrap.css")
+                .AddFile("~/Content/site.css");
+
+            // Create bundles
+            ScriptBundle = scriptBundleBuilder.Create();
+            StyleBundle = styleBundleBuilder.Create();
+
+            // Add bundles to bundle provider
             if (!bundleProvider.Add(ApplicationScriptsBundleKey, ScriptBundle)) {
                 throw new Exception("Can't setup script bundle.");
             }
@@ -23,17 +40,6 @@ namespace Bundler.Example {
             if (!bundleProvider.Add(ApplicationStylesBundleKey, StyleBundle)) {
                 throw new Exception("Can't setup style bundle.");
             }
-
-            // Scripts
-            ScriptBundle.AddFile("~/Scripts/jquery-1.10.2.js", true)
-                .AddFile("~/Scripts/jquery.validate.js", true)
-                .AddFile("~/Scripts/modernizr-2.6.2.js", true)
-                .AddFile("~/Scripts/bootstrap.js", true)
-                .AddFile("~/Scripts/respond.js", true);
-
-            // Styles
-            StyleBundle.AddFile("~/Content/bootstrap.css", true)
-                .AddFile("~/Content/site.css", true);
         }
     }
 }

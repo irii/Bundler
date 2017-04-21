@@ -5,15 +5,32 @@ using Bundler.Infrastructure;
 
 namespace Bundler.Sources {
     public class StreamSource : ISource {
-        public StreamSource(string virtualFile) {
-            Identifier = virtualFile;
+        public const string Tag = nameof(StreamSource);
+
+        private readonly string[] _virtualFiles;
+
+        public StreamSource(params string[] virtualFiles) {
+            _virtualFiles = virtualFiles;
+            Identifier = string.Join(";", virtualFiles);
         }
 
         public void Dispose() { }
 
         public bool AddItems(IBundleContext bundleContext, ICollection<ISourceItem> items, ICollection<string> watchPaths) {
-            items.Add(new StreamSourceItem(Identifier, bundleContext.VirtualPathProvider));
-            watchPaths.Add(Identifier);
+            foreach (var virtualFile in _virtualFiles) {
+                if (!virtualFile.StartsWith("~/", StringComparison.InvariantCultureIgnoreCase)) {
+                    bundleContext.Diagnostic.Log(LogLevel.Error, Tag, nameof(AddItems), $"Path should be virtual for ${virtualFile}!");
+                    return false;
+                }
+
+                if (!bundleContext.VirtualPathProvider.FileExists(virtualFile)) {
+                    bundleContext.Diagnostic.Log(LogLevel.Error, Tag, nameof(AddItems), "Can't find file  ${virtualFile}");
+                    return false;
+                }
+
+                items.Add(new StreamSourceItem(virtualFile, bundleContext.VirtualPathProvider));
+                watchPaths.Add(virtualFile);
+            }
 
             return true;
         }

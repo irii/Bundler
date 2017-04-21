@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Bundler.Infrastructure;
+﻿using Bundler.Infrastructure;
 
 namespace Bundler.Css {
     public static class CssStyles {
@@ -8,8 +7,8 @@ namespace Bundler.Css {
 
         private const string PlaceHolder = "\r\n";
 
-        public static IBundle CreateCssBundle(this IBundleProvider bundleProvider, params IBundleContentTransformer[] additionalContentTransformers) {
-            return new Bundle(bundleProvider.Context, ContentType, PlaceHolder, TagFormat, new[] { new CssBundleContentTransformer() }.Union(additionalContentTransformers).ToArray());
+        public static BundleBuilder CreateCssBundle(this IBundleProvider bundleProvider, params IBundleContentTransformer[] additionalContentTransformers) {
+            return new BundleBuilder(bundleProvider.Context, ContentType, PlaceHolder, TagFormat).AddContentTransformer(new CssBundleContentTransformer());
         }
     }
 }
