@@ -20,7 +20,7 @@ namespace Bundler.AspNet {
         }
 
         public void ProcessRequest(HttpContext context) {
-            if (_bundleContext.Configuration.Cache) {
+            if (_bundleContext.Configuration.Get(CachingConfiguration.Enabled)) {
                 // Try Resolve request by IfModifiedSince (requires version tag) Or IfNoneMatch (If Etag is enabled)
                 if (TryResolveCacheResponse(context) || TryResolveCacheResponseByETag(context)) {
                     WriteCacheResponse(context);
@@ -48,7 +48,7 @@ namespace Bundler.AspNet {
         }
 
         private bool TryResolveCacheResponseByETag(HttpContext context) {
-            if (!_bundleContext.Configuration.ETag) {
+            if (!_bundleContext.Configuration.Get(CachingConfiguration.UseEtag)) {
                 return false; // Disabled
             }
 
@@ -78,14 +78,18 @@ namespace Bundler.AspNet {
         private void SetResponseHeaders(HttpContext context) {
             context.Response.ContentType = _bundleContentResponse.ContentType;
 
-            if (_bundleContext.Configuration.Cache) {
-                if (_bundleContext.Configuration.ETag) {
+            foreach (var header in _bundleContentResponse.Headers) {
+                context.Response.Headers[header.Key] = header.Value;
+            }
+
+            if (_bundleContext.Configuration.Get(CachingConfiguration.Enabled)) {
+                if (_bundleContext.Configuration.Get(CachingConfiguration.UseEtag)) {
                     context.Response.Cache.SetETag(_bundleContentResponse.ContentHash);
                 }
 
                 context.Response.Cache.SetCacheability(HttpCacheability.Public);
                 context.Response.Cache.SetLastModified(_bundleContentResponse.LastModification.UtcDateTime);
-                context.Response.Cache.SetExpires(DateTime.UtcNow.Add(_bundleContext.Configuration.CacheDuration));
+                context.Response.Cache.SetExpires(DateTime.UtcNow.Add(_bundleContext.Configuration.Get(CachingConfiguration.Duration)));
             }
         }
     }

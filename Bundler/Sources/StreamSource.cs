@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Bundler.Infrastructure;
 
 namespace Bundler.Sources {
@@ -11,7 +12,7 @@ namespace Bundler.Sources {
 
         public StreamSource(params string[] virtualFiles) {
             _virtualFiles = virtualFiles;
-            Identifier = string.Join(";", virtualFiles);
+            Identifier = string.Join(";", virtualFiles.OrderBy(x => x.ToLower()));
         }
 
         public void Dispose() { }

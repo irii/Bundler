@@ -12,8 +12,11 @@ namespace Bundler.Less {
         
         protected virtual ILessEngine GetLessEngine(IBundle bundle, BundleTransformItem bundleTransformItemResult) {
             var parser = new Parser(new PlainStylizer(), new Importer(new DotLessVirtualFileReader(bundle.Context.VirtualPathProvider)));
-            
-            var lessEngine = new LessEngine(parser, new DotLessBundleLogger(bundle.Context.Diagnostic), bundle.Context.Configuration.Optimization, !bundle.Context.Configuration.Optimization) {
+
+            var compress = bundle.Context.Configuration.Get(LessConfiguration.Compress);
+            var debug = bundle.Context.Configuration.Get(LessConfiguration.Debug);
+
+            var lessEngine = new LessEngine(parser, new DotLessBundleLogger(bundle.Context.Diagnostic), compress, debug) {
                 CurrentDirectory = Path.GetDirectoryName(bundleTransformItemResult.VirtualPath)
             };
             

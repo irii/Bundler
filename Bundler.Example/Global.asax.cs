@@ -3,6 +3,8 @@ using System.Web.Routing;
 using Bundler.AspNet;
 using Bundler.Defaults;
 using Bundler.Infrastructure;
+using Bundler.JavaScript;
+using Bundler.Less;
 
 namespace Bundler.Example {
     public class MvcApplication : System.Web.HttpApplication {
@@ -16,14 +18,26 @@ namespace Bundler.Example {
             FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
             RouteConfig.RegisterRoutes(RouteTable.Routes);
 
-            var bundleContext = new AspNetBundleContext(new DefaultBundleConfiguration {
-                BundleFiles = true,
-                Optimization = true,
-                Cache = true,
-                AutoRefresh = true,
-                ETag = true
-            }, new DebugBundleDiagnostic());
+            var configuration = new DefaultBundleConfigurationBuilder()
+                .SetupBundling(new BundlingSettings {
+                    AutoRefresh = true,
+                    CombineResponse = true,
+                    FallbackOnError = true
+                })
+                .SetupCaching(new CachingSettings {
+                    Enabled = true,
+                    UseEtag = true
+                })
+                .SetupLess(new LessSettings {
+                    Compress = true,
+                    Debug = true
+                })
+                .SetupJavaScript(new JavaScriptSettings {
+                    Minify = true
+                })
+                .Create();
 
+            var bundleContext = new AspNetBundleContext(configuration, new DebugBundleDiagnostic());
             var bundleProvider = new BundleProvider(bundleContext);
 
             AspNetBundler.Current = bundleProvider;

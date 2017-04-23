@@ -47,6 +47,7 @@
     <Compile Include="AspNetBundlerHandler.cs" />
     <Compile Include="AspNetBundlerModule.cs" />
     <Compile Include="AspNetBundleContext.cs" />
+    <Compile Include="CachingConfiguration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

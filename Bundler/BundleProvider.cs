@@ -6,6 +6,10 @@ using Bundler.Infrastructure;
 
 namespace Bundler {
     public class BundleProvider : IBundleProvider {
+        private const string VersionQueryParameterName = "v";
+        private const string FileQueryParameterName = "f";
+
+
         private readonly object _currentBundleMappingsWriteLock = new object();
         private BundleMappings _currentBundleMappings = BundleMappings.Empty();
 
@@ -68,13 +72,13 @@ namespace Bundler {
             var response = bundle.GetResponse();
 
             var queryArgs = bundle.Context.UrlHelper.ParseQuery(uri.Query);
-            queryArgs.TryGetValue(Context.Configuration.VersionQueryParameterName, out requestVersion);
+            queryArgs.TryGetValue(VersionQueryParameterName, out requestVersion);
             if (string.IsNullOrWhiteSpace(requestVersion)) {
                 requestVersion = null;
             }
 
             string requestFile;
-            if (queryArgs.TryGetValue(Context.Configuration.FileQueryParameterName, out requestFile)) {
+            if (queryArgs.TryGetValue(FileQueryParameterName, out requestFile)) {
                 return response.Files.TryGetValue(requestFile, out bundleContentResponse);
             }
 
@@ -90,14 +94,14 @@ namespace Bundler {
 
             var response = bundle.GetResponse();
             
-            if (bundle.Context.Configuration.BundleFiles) {
-                return bundle.Render(bundle.Context.UrlHelper.ToAbsolute(virtualPath) + $"?{Context.Configuration.VersionQueryParameterName}={response.ContentHash}");
+            if (bundle.Context.Configuration.Get(BundlingConfiguration.CombineResponse)) {
+                return bundle.Render(bundle.Context.UrlHelper.ToAbsolute(virtualPath) + $"?{VersionQueryParameterName}={response.ContentHash}");
             }
             
             var sB = new StringBuilder();
             foreach (var file in response.Files) {
                 sB.AppendLine(bundle.Render(bundle.Context.UrlHelper.ToAbsolute(virtualPath)
-                    + $"?{Context.Configuration.FileQueryParameterName}={bundle.Context.UrlHelper.Encode(file.Key)}&{Context.Configuration.VersionQueryParameterName}={response.ContentHash}"));
+                    + $"?{FileQueryParameterName}={bundle.Context.UrlHelper.Encode(file.Key)}&{VersionQueryParameterName}={response.ContentHash}"));
             }
 
             return sB.ToString();

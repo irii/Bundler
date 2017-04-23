@@ -44,6 +44,8 @@
     <Compile Include="BundleProvider.cs" />
     <Compile Include="BundleResponse.cs" />
     <Compile Include="BundleBuilder.cs" />
+    <Compile Include="BundlingConfiguration.cs" />
+    <Compile Include="Defaults\DefaultBundleConfigurationBuilder.cs" />
     <Compile Include="Helper\EnumerableHelper.cs" />
     <Compile Include="Comparers\SourceEqualityComparer.cs" />
     <Compile Include="Comparers\SourceItemEqualityComparer.cs" />

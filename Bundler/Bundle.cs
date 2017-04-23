@@ -52,7 +52,7 @@ namespace Bundler {
 
         private void ChangeHandler(string virtualPath) {
             // TODO: Wait for more events
-            if (Context.Configuration.AutoRefresh) {
+            if (Context.Configuration.Get(BundlingConfiguration.AutoRefresh)) {
                 Refresh();
             }
         }
@@ -142,18 +142,14 @@ namespace Bundler {
                 return bundleTransformItem;
             }
 
-            if (!BundleContentTransformers.All(t => t.Process(this, bundleTransformItem))) {
-                bundleTransformItem.Errors.Add("Failed to process");
-            }
-            
-            if (bundleTransformItem.Errors.Count == 0) {
+            if (BundleContentTransformers.All(t => t.Process(this, bundleTransformItem))) {
                 return bundleTransformItem;
             }
 
             var errors = string.Join("; ", bundleTransformItem.Errors);
 
             Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(TransformItem),$"Failed to Process {sourceItem.VirtualFile}: {errors}");
-            if (!Context.Configuration.FallbackOnError) {
+            if (!Context.Configuration.Get(BundlingConfiguration.FallbackOnError)) {
                 return null;
             }
 

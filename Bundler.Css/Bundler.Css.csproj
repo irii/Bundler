@@ -51,6 +51,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CssBundleContentTransformer.cs" />
+    <Compile Include="CssConfiguration.cs" />
     <Compile Include="CssStyles.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

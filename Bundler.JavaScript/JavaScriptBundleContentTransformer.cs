@@ -7,7 +7,7 @@ namespace Bundler.JavaScript {
         void IDisposable.Dispose() { }
 
         bool IBundleContentTransformer.Process(IBundle bundle, BundleTransformItem bundleContentTransformResult) {
-            if (!bundle.Context.Configuration.Optimization || string.IsNullOrWhiteSpace(bundleContentTransformResult.Content)) {
+            if (!bundle.Context.Configuration.Get(JavaScriptConfiguration.Minify) || string.IsNullOrWhiteSpace(bundleContentTransformResult.Content)) {
                 bundleContentTransformResult.Content = bundleContentTransformResult.Content.Trim();
                 return true;
             }

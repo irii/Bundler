@@ -1,74 +1,44 @@
-﻿using System;
-
-namespace Bundler.Infrastructure {
+﻿namespace Bundler.Infrastructure {
     public interface IBundleConfiguration {
         /// <summary>
-        /// Returns the query parameter name of the version argument.
+        /// Get setting class
         /// </summary>
-        string VersionQueryParameterName { get; }
-
-        /// <summary>
-        /// Returns the query parameter name of the file argument.
-        /// </summary>
-        string FileQueryParameterName { get; }
-
-        /// <summary>
-        /// Get Property value
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="property"></param>
+        /// <typeparam name="T">Setting class</typeparam>
         /// <returns></returns>
-        T GetValue<T>(Property<T> property);
-
-        /// <summary>
-        /// Optimization
-        /// </summary>
-        bool Optimization { get; }
-
-        /// <summary>
-        /// Enable Server cache
-        /// </summary>
-        bool Cache { get; }
-
-        /// <summary>
-        /// Append ETag
-        /// </summary>
-        bool ETag { get; }
-
-        /// <summary>
-        /// Server cache duration
-        /// </summary>
-        TimeSpan CacheDuration { get; }
-
-        /// <summary>
-        /// Use input content if processing has failed
-        /// </summary>
-        bool FallbackOnError { get; }
-
-        /// <summary>
-        /// Combine all files to one.
-        /// </summary>
-        bool BundleFiles { get; }
-
-        /// <summary>
-        /// Refresh bundle on source change.
-        /// </summary>
-        bool AutoRefresh { get; }
-
+        T Get<T>(Setting<T> key);
     }
 
-    public struct Property<T> {
-        public Property(Guid identifier, string name) : this(identifier, name, default(T)) { }
+    public interface IBundleConfigurationBuilder {
+        /// <summary>
+        /// Create Configuration
+        /// </summary>
+        /// <returns></returns>
+        IBundleConfiguration Create();
 
-        public Property(Guid identifier, string name, T @default) {
-            Identifier = identifier;
-            Name = name;
-            Default = @default;
+        /// <summary>
+        /// Set setting class
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        void Set<T>(Setting<T> key, T value);
+
+        /// <summary>
+        /// Get setting class
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T Get<T>(Setting<T> key);
+    }
+
+    public struct Setting<T> {
+        public Setting(string section, string name, T defaultValue = default(T)) {
+            Key = $"{section}::{name}";
+            Default = defaultValue;
         }
-        public Guid Identifier { get; }
 
-        public string Name { get; }
-
+        public string Key { get; }
         public T Default { get; }
     }
 }
