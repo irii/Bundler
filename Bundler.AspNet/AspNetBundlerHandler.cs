@@ -87,9 +87,11 @@ namespace Bundler.AspNet {
                     context.Response.Cache.SetETag(_bundleContentResponse.ContentHash);
                 }
 
+                var lastModified = DateTime.UtcNow;
+
                 context.Response.Cache.SetCacheability(HttpCacheability.Public);
-                context.Response.Cache.SetLastModified(_bundleContentResponse.LastModification.UtcDateTime);
-                context.Response.Cache.SetExpires(DateTime.UtcNow.Add(_bundleContext.Configuration.Get(CachingConfiguration.Duration)));
+                context.Response.Cache.SetLastModified(lastModified);
+                context.Response.Cache.SetExpires(lastModified.Add(_bundleContext.Configuration.Get(CachingConfiguration.Duration)));
             }
         }
     }
