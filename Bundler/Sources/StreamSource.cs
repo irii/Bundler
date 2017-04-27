@@ -25,7 +25,7 @@ namespace Bundler.Sources {
                 }
 
                 if (!bundleContext.VirtualPathProvider.FileExists(virtualFile)) {
-                    bundleContext.Diagnostic.Log(LogLevel.Error, Tag, nameof(AddItems), "Can't find file  ${virtualFile}");
+                    bundleContext.Diagnostic.Log(LogLevel.Error, Tag, nameof(AddItems), $"Can't find file {virtualFile}");
                     return false;
                 }
 
