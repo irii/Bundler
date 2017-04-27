@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using Bundler.Infrastructure;
 
 namespace Bundler {
     public class BundleProvider : IBundleProvider {
-        private const string VersionQueryParameterName = "v";
-        private const string FileQueryParameterName = "f";
+        protected const string VersionQueryParameterName = "v";
+        protected const string FileQueryParameterName = "f";
 
 
         private readonly object _currentBundleMappingsWriteLock = new object();
@@ -78,7 +79,7 @@ namespace Bundler {
             }
 
             string requestFile;
-            if (queryArgs.TryGetValue(FileQueryParameterName, out requestFile)) {
+            if (queryArgs.TryGetValue(FileQueryParameterName, out requestFile) && !string.IsNullOrWhiteSpace(requestFile)) {
                 return response.Files.TryGetValue(requestFile, out bundleContentResponse);
             }
 
@@ -95,18 +96,33 @@ namespace Bundler {
             var response = bundle.GetResponse();
             
             if (bundle.Context.Configuration.Get(BundlingConfiguration.CombineResponse)) {
-                return bundle.Render(bundle.Context.UrlHelper.ToAbsolute(virtualPath) + $"?{VersionQueryParameterName}={response.ContentHash}");
+                return bundle.Render(GenerateUrl(virtualPath, bundle, response, null));
             }
             
             var sB = new StringBuilder();
             foreach (var file in response.Files) {
-                sB.AppendLine(bundle.Render(bundle.Context.UrlHelper.ToAbsolute(virtualPath)
-                    + $"?{FileQueryParameterName}={bundle.Context.UrlHelper.Encode(file.Key)}&{VersionQueryParameterName}={response.ContentHash}"));
+                sB.AppendLine(bundle.Render(GenerateUrl(virtualPath, bundle, file.Value, file.Key)));
             }
 
             return sB.ToString();
         }
 
+        private static string GenerateUrl(string virtualPath, IBundle bundle, IBundleContentResponse response, string fileName = null) {
+            var fQuery = !string.IsNullOrWhiteSpace(fileName)
+                ? $"{FileQueryParameterName}={bundle.Context.UrlHelper.Encode(fileName)}"
+                : null;
+
+            var vQuery = bundle.Context.Configuration.Get(BundlingConfiguration.IncludeContentHash) 
+                ? $"{VersionQueryParameterName}={bundle.Context.UrlHelper.Encode(response.ContentHash)}" 
+                : null;
+
+            var queryArgs = string.Join("&", new[] {
+                fQuery,
+                vQuery
+            }.Where(x => x != null));
+
+            return string.Join("?", bundle.Context.UrlHelper.ToAbsolute(virtualPath), queryArgs);
+        }
 
         private static void ValidateVirtualPath(string virtualPath) {
             if (virtualPath == null) {

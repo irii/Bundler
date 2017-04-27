@@ -1,4 +1,5 @@
-﻿using System.Web.Mvc;
+﻿using System;
+using System.Web.Mvc;
 using System.Web.Routing;
 using Bundler.AspNet;
 using Bundler.Defaults;
@@ -22,7 +23,8 @@ namespace Bundler.Example {
                 .SetupBundling(new BundlingSettings {
                     AutoRefresh = true,
                     CombineResponse = true,
-                    FallbackOnError = true
+                    FallbackOnError = true,
+                    IncludeContentHash = true
                 })
                 .SetupCaching(new CachingSettings {
                     Enabled = true,

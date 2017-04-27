@@ -65,7 +65,9 @@ namespace Bundler.AspNet {
             return string.Equals(requestETags[0], _bundleContentResponse.ContentHash, StringComparison.InvariantCultureIgnoreCase);
         }
 
-        private static void WriteCacheResponse(HttpContext context) {
+        private void WriteCacheResponse(HttpContext context) {
+            SetResponseCacheHeaders(context);
+
             context.Response.StatusCode = 304;
             context.Response.SuppressContent = true;
         }
@@ -83,16 +85,20 @@ namespace Bundler.AspNet {
             }
 
             if (_bundleContext.Configuration.Get(CachingConfiguration.Enabled)) {
-                if (_bundleContext.Configuration.Get(CachingConfiguration.UseEtag)) {
-                    context.Response.Cache.SetETag(_bundleContentResponse.ContentHash);
-                }
-
-                var lastModified = DateTime.UtcNow;
-
-                context.Response.Cache.SetCacheability(HttpCacheability.Public);
-                context.Response.Cache.SetLastModified(lastModified);
-                context.Response.Cache.SetExpires(lastModified.Add(_bundleContext.Configuration.Get(CachingConfiguration.Duration)));
+                SetResponseCacheHeaders(context);
             }
+        }
+
+        private void SetResponseCacheHeaders(HttpContext context) {
+            if (_bundleContext.Configuration.Get(CachingConfiguration.UseEtag)) {
+                context.Response.Cache.SetETag(_bundleContentResponse.ContentHash);
+            }
+
+            var lastModified = DateTime.UtcNow;
+
+            context.Response.Cache.SetCacheability(HttpCacheability.Public);
+            context.Response.Cache.SetLastModified(lastModified);
+            context.Response.Cache.SetExpires(lastModified.Add(_bundleContext.Configuration.Get(CachingConfiguration.Duration)));
         }
     }
 }

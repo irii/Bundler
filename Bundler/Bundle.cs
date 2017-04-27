@@ -104,7 +104,7 @@ namespace Bundler {
 
             var responseContent = string.Join(_placeholder, transformResults.Select(x => x.Content));
             var fileRespones = transformResults
-                .Select(x => new BundleFile(x.VirtualPath, ContentType, GetContentHash(x.Content), x.Content, DateTime.UtcNow))
+                .Select(x => new BundleFileResponse(x.VirtualPath, ContentType, GetContentHash(x.Content), x.Content, DateTime.UtcNow))
                 .ToDictionary(x => x.VirtualFile, x => (IBundleContentResponse)x, StringComparer.InvariantCultureIgnoreCase);
 
             var bundleResponse = new BundleResponse(ContentType, GetContentHash(responseContent), DateTime.UtcNow, responseContent, fileRespones, new Dictionary<string, string>(0));

@@ -5,7 +5,7 @@ namespace Bundler.Infrastructure {
         string ToAbsolute(string virtualUrl);
 
         /// <summary>
-        /// Returns dictionary with all query parameters
+        /// Returns dictionary with all query parameters (fully decoded)
         /// </summary>
         /// <param name="query"></param>
         /// <returns></returns>

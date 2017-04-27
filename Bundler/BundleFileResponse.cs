@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using Bundler.Infrastructure;
 
 namespace Bundler {
-    public class BundleFile : IBundleContentResponse {
-        public BundleFile(string virtualFile, string contentType, string contentHash, string content, DateTimeOffset lastModification) {
+    public class BundleFileResponse : IBundleContentResponse {
+        public BundleFileResponse(string virtualFile, string contentType, string contentHash, string content, DateTimeOffset lastModification) {
             VirtualFile = virtualFile;
             ContentType = contentType;
             ContentHash = contentHash;
@@ -19,5 +19,6 @@ namespace Bundler {
         public DateTimeOffset LastModification { get; }
 
         public IReadOnlyDictionary<string, string> Headers { get; } = new Dictionary<string, string>(StringComparer.InvariantCultureIgnoreCase);
+
     }
 }

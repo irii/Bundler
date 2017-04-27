@@ -40,7 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BundleFile.cs" />
+    <Compile Include="BundleFileResponse.cs" />
     <Compile Include="BundleProvider.cs" />
     <Compile Include="BundleResponse.cs" />
     <Compile Include="BundleBuilder.cs" />
