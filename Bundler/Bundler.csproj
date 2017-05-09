@@ -49,6 +49,8 @@
     <Compile Include="Helper\EnumerableHelper.cs" />
     <Compile Include="Comparers\SourceEqualityComparer.cs" />
     <Compile Include="Comparers\SourceItemEqualityComparer.cs" />
+    <Compile Include="Infrastructure\IBundleContentResponse.cs" />
+    <Compile Include="Infrastructure\IBundleFileResponse.cs" />
     <Compile Include="Sources\DirectorySource.cs" />
     <Compile Include="Sources\StringSource.cs" />
     <Compile Include="Sources\StreamSource.cs" />

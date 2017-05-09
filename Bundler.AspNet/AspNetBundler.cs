@@ -7,23 +7,26 @@ namespace Bundler.AspNet {
         private static readonly object WriteLock = new object();
         private static IBundleProvider _currentBundleProvider;
 
-        public static bool IsReady { get; private set; }
+        public static bool IsInitialized { get; private set; }
 
         /// <summary>
         /// Current BundleProvider
         /// </summary>
         public static IBundleProvider Current {
             get {
-                if (!IsReady) {
+                if (!IsInitialized) {
                     throw new Exception("Not initialized. Set BundleProvider before use!");
                 }
                 return _currentBundleProvider;
             }
-            set {
-                lock (WriteLock) {
-                    Interlocked.Exchange(ref _currentBundleProvider, value);
-                    IsReady = true;
-                }
+        }
+
+        public static void Initialize(IBundleProvider bundleProvider) {
+            if (bundleProvider == null) throw new ArgumentNullException(nameof(bundleProvider));
+
+            lock (WriteLock) {
+                Interlocked.Exchange(ref _currentBundleProvider, bundleProvider);
+                IsInitialized = true;
             }
         }
     }

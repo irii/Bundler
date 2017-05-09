@@ -17,7 +17,7 @@ namespace Bundler.Less {
             var debug = bundle.Context.Configuration.Get(LessConfiguration.Debug);
 
             var lessEngine = new LessEngine(parser, new DotLessBundleLogger(bundle.Context.Diagnostic), compress, debug) {
-                CurrentDirectory = Path.GetDirectoryName(bundleTransformItemResult.VirtualPath)
+                CurrentDirectory = Path.GetDirectoryName(bundleTransformItemResult.VirtualFile)
             };
             
             return lessEngine;
@@ -34,7 +34,7 @@ namespace Bundler.Less {
             try {
                 var transformedContent = lessEngine.TransformToCss(bundleTransformItemResult.Content, null) ?? string.Empty;
                 if (!lessEngine.LastTransformationSuccessful) {
-                    bundleTransformItemResult.Errors.Add($"Failed to process less/css file {bundleTransformItemResult.VirtualPath}");
+                    bundleTransformItemResult.Errors.Add($"Failed to process less/css file {bundleTransformItemResult.VirtualFile}");
                     return false;
                 }
 
@@ -48,6 +48,8 @@ namespace Bundler.Less {
                 return true;
             } catch (Exception ex) {
                 bundleTransformItemResult.Errors.Add(ex.Message);
+                bundleTransformItemResult.CanUseFallback = false;
+
                 return false;
             }
         }

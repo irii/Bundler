@@ -104,7 +104,7 @@ namespace Bundler {
 
             var responseContent = string.Join(_placeholder, transformResults.Select(x => x.Content));
             var fileRespones = transformResults
-                .Select(x => new BundleFileResponse(x.VirtualPath, ContentType, GetContentHash(x.Content), x.Content, DateTime.UtcNow))
+                .Select(x => new BundleFileResponse(x.VirtualFile, ContentType, GetContentHash(x.Content), x.Content, DateTime.UtcNow))
                 .ToDictionary(x => x.VirtualFile, x => (IBundleContentResponse)x, StringComparer.InvariantCultureIgnoreCase);
 
             var bundleResponse = new BundleResponse(ContentType, GetContentHash(responseContent), DateTime.UtcNow, responseContent, fileRespones, new Dictionary<string, string>(0));
@@ -149,7 +149,7 @@ namespace Bundler {
             var errors = string.Join("; ", bundleTransformItem.Errors);
 
             Context.Diagnostic.Log(LogLevel.Error, Tag, nameof(TransformItem),$"Failed to Process {sourceItem.VirtualFile}: {errors}");
-            if (!Context.Configuration.Get(BundlingConfiguration.FallbackOnError)) {
+            if (!Context.Configuration.Get(BundlingConfiguration.FallbackOnError) || !bundleTransformItem.CanUseFallback) {
                 return null;
             }
 
