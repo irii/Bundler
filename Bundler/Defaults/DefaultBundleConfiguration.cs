@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Configuration;
 
 namespace Bundler.Defaults {
     public class DefaultBundleConfiguration : IBundleConfiguration {

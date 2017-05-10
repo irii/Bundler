@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 using dotless.Core.Input;
 
 namespace Bundler.Less {

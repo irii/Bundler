@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.Sources {
     public class StringSource : ISource {

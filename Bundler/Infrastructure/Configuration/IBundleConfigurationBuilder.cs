@@ -1,13 +1,4 @@
-﻿namespace Bundler.Infrastructure {
-    public interface IBundleConfiguration {
-        /// <summary>
-        /// Get setting class
-        /// </summary>
-        /// <typeparam name="T">Setting class</typeparam>
-        /// <returns></returns>
-        T Get<T>(Setting<T> key);
-    }
-
+namespace Bundler.Infrastructure.Configuration {
     public interface IBundleConfigurationBuilder {
         /// <summary>
         /// Create Configuration
@@ -30,15 +21,5 @@
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
         T Get<T>(Setting<T> key);
-    }
-
-    public struct Setting<T> {
-        public Setting(string section, string name, T defaultValue = default(T)) {
-            Key = $"{section}::{name}";
-            Default = defaultValue;
-        }
-
-        public string Key { get; }
-        public T Default { get; }
     }
 }

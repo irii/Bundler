@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Bundler.Infrastructure {
+namespace Bundler.Infrastructure.Server {
     public interface IBundleDiagnostic {
         /// <summary>
         /// Log

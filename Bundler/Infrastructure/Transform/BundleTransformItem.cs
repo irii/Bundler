@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Bundler.Infrastructure {
+namespace Bundler.Infrastructure.Transform {
     public class BundleTransformItem {
         private bool _canUseFallback = true;
 

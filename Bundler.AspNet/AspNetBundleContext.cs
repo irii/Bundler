@@ -1,6 +1,8 @@
 ﻿using System;
 using Bundler.Defaults;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Configuration;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.AspNet {
     public class AspNetBundleContext : IBundleContext {

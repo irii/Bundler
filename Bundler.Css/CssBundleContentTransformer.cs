@@ -1,5 +1,6 @@
 ﻿using System;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Transform;
 using Microsoft.Ajax.Utilities;
 
 namespace Bundler.Css {

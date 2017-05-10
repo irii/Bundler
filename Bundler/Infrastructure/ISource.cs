@@ -1,5 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.Infrastructure {
     public interface ISource {
@@ -16,18 +16,5 @@ namespace Bundler.Infrastructure {
         /// <param name="watchPaths">List of paths which should be used for the file system watcher</param>
         /// <returns></returns>
         bool AddItems(IBundleContext bundleContext, ICollection<ISourceItem> items, ICollection<string> watchPaths);
-    }
-
-    public interface ISourceItem : IDisposable {
-        /// <summary>
-        /// Virtual path of the item.
-        /// </summary>
-        string VirtualFile { get; }
-
-        /// <summary>
-        /// Returns the content of the item.
-        /// </summary>
-        /// <returns></returns>
-        string Get();
     }
 }

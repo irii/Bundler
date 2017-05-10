@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.Sources {
     public class StreamSource : ISource {

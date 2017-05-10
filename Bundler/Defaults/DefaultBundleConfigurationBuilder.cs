@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Configuration;
 
 namespace Bundler.Defaults {
     public class DefaultBundleConfigurationBuilder : IBundleConfigurationBuilder {

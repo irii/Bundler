@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.Sources {
     public class DirectorySource : ISource {

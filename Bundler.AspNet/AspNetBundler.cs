@@ -21,6 +21,10 @@ namespace Bundler.AspNet {
             }
         }
 
+        /// <summary>
+        /// Set BundleProvider for request handling
+        /// </summary>
+        /// <param name="bundleProvider"></param>
         public static void Initialize(IBundleProvider bundleProvider) {
             if (bundleProvider == null) throw new ArgumentNullException(nameof(bundleProvider));
 

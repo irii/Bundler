@@ -1,5 +1,6 @@
 ﻿using System;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Configuration;
 
 namespace Bundler.JavaScript {
     public static class JavaScriptConfiguration {

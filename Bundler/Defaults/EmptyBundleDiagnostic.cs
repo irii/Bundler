@@ -1,5 +1,6 @@
 ﻿using System;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.Defaults {
     public sealed class EmptyBundleDiagnostic : IBundleDiagnostic {

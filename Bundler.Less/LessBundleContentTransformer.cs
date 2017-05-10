@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Transform;
 using dotless.Core;
 using dotless.Core.Importers;
 using dotless.Core.Parser;
@@ -35,6 +36,7 @@ namespace Bundler.Less {
                 var transformedContent = lessEngine.TransformToCss(bundleTransformItemResult.Content, null) ?? string.Empty;
                 if (!lessEngine.LastTransformationSuccessful) {
                     bundleTransformItemResult.Errors.Add($"Failed to process less/css file {bundleTransformItemResult.VirtualFile}");
+                    bundleTransformItemResult.CanUseFallback = false;
                     return false;
                 }
 

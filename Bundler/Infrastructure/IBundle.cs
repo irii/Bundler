@@ -1,4 +1,5 @@
 ﻿using System;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.Infrastructure {
     public interface IBundle : IDisposable {

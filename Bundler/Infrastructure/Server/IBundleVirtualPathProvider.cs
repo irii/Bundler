@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace Bundler.Infrastructure {
+namespace Bundler.Infrastructure.Server {
     public interface IBundleVirtualPathProvider : IDisposable {
         /// <summary>
         /// Open file based on the virtual path.

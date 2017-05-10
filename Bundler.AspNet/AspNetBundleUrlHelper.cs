@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.AspNet {
     public class AspNetBundleUrlHelper : IBundleUrlHelper {

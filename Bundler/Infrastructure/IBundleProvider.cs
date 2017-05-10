@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.Infrastructure {
     public interface IBundleProvider {

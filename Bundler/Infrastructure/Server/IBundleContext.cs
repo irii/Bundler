@@ -1,6 +1,7 @@
 ﻿using System;
+using Bundler.Infrastructure.Configuration;
 
-namespace Bundler.Infrastructure {
+namespace Bundler.Infrastructure.Server {
     public interface IBundleContext : IDisposable {
         /// <summary>
         /// Virtual Path Provider

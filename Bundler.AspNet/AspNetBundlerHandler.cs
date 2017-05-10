@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.AspNet {
     public sealed class AspNetBundlerHandler : IHttpHandler {

@@ -6,16 +6,16 @@ using System.Text;
 using System.Threading;
 using Bundler.Comparers;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
+using Bundler.Infrastructure.Transform;
 
 namespace Bundler {
     public class Bundle : IBundle {
-        private readonly string _placeholder;
+        private readonly IBundleRenderer _bundleRenderer;
         private const string Tag = nameof(Bundle);
         
         protected readonly IBundleContentTransformer[] BundleContentTransformers;
 
-        public string ContentType { get; }
-        public string TagFormat { get; }
         public IBundleContext Context { get; }
 
         private BundleState _bundleState;
@@ -40,14 +40,12 @@ namespace Bundler {
             }
         }
 
-        public Bundle(IBundleContext bundleContext, string contentType, string placeholder, string tagFormat, IBundleContentTransformer[] contentTransformers) {
-            _placeholder = placeholder;
+        public Bundle(IBundleContext bundleContext, IBundleRenderer bundleRenderer, IBundleContentTransformer[] contentTransformers) {
+            _bundleRenderer = bundleRenderer;
             Context = bundleContext;
             BundleContentTransformers = contentTransformers?.ToArray() ?? new IBundleContentTransformer[0];
-            ContentType = contentType;
-            TagFormat = tagFormat;
 
-            _bundleState = BundleState.CreateEmpty(ContentType);
+            _bundleState = BundleState.CreateEmpty(_bundleRenderer.ContentType);
         }
 
         private void ChangeHandler(string virtualPath) {
@@ -102,12 +100,12 @@ namespace Bundler {
             // Join watch paths
             watchPaths.UnionWith(transformResults.SelectMany(x => x.WatchPaths));
 
-            var responseContent = string.Join(_placeholder, transformResults.Select(x => x.Content));
+            var responseContent = _bundleRenderer.Concat(transformResults.Select(x => x.Content));
             var fileRespones = transformResults
-                .Select(x => new BundleFileResponse(x.VirtualFile, ContentType, GetContentHash(x.Content), x.Content, DateTime.UtcNow))
+                .Select(x => new BundleFileResponse(x.VirtualFile, _bundleRenderer.ContentType, GetContentHash(x.Content), x.Content, DateTime.UtcNow))
                 .ToDictionary(x => x.VirtualFile, x => (IBundleContentResponse)x, StringComparer.InvariantCultureIgnoreCase);
 
-            var bundleResponse = new BundleResponse(ContentType, GetContentHash(responseContent), DateTime.UtcNow, responseContent, fileRespones, new Dictionary<string, string>(0));
+            var bundleResponse = new BundleResponse(_bundleRenderer.ContentType, GetContentHash(responseContent), DateTime.UtcNow, responseContent, fileRespones, new Dictionary<string, string>(0));
 
             var bundleState = new BundleState(sources.ToArray(), watchPaths.ToArray(), bundleResponse);
             return bundleState;
@@ -181,11 +179,11 @@ namespace Bundler {
 
         public void Dispose() {
             // Make conatiner empty to lose all dependencies
-            TryUpdateBundleState(() => BundleState.CreateEmpty(ContentType));
+            TryUpdateBundleState(() => BundleState.CreateEmpty(_bundleRenderer.ContentType));
         }
 
         public string Render(string url) {
-            return string.Format(TagFormat, url);
+            return _bundleRenderer.Render(url);
         }
 
         private class BundleState {

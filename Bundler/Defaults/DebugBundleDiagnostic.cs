@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
-using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.Defaults {
     public sealed class DebugBundleDiagnostic : IBundleDiagnostic {

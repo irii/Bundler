@@ -49,6 +49,7 @@
     <Compile Include="DotLessBundleLogger.cs" />
     <Compile Include="DotLessVirtualFileReader.cs" />
     <Compile Include="LessConfiguration.cs" />
+    <Compile Include="LessRenderer.cs" />
     <Compile Include="LessStyles.cs" />
     <Compile Include="LessBundleContentTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

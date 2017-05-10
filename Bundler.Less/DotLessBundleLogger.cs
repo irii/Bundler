@@ -1,8 +1,13 @@
 ﻿using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
+using Bundler.Infrastructure.Transform;
 using dotless.Core.Loggers;
 using LogLevel = dotless.Core.Loggers.LogLevel;
 
 namespace Bundler.Less {
+    /// <summary>
+    /// Logging Bridge
+    /// </summary>
     public class DotLessBundleLogger : ILogger {
         private readonly IBundleDiagnostic _bundleDiagnostic;
 
@@ -11,23 +16,23 @@ namespace Bundler.Less {
         }
 
         public void Log(LogLevel level, string message) {
-            Infrastructure.LogLevel bundleLogLevel;
+            Infrastructure.Server.LogLevel bundleLogLevel;
 
             switch (level) {
                 case LogLevel.Info:
-                    bundleLogLevel = Infrastructure.LogLevel.Info;
+                    bundleLogLevel = Infrastructure.Server.LogLevel.Info;
                     break;
                 case LogLevel.Debug:
-                    bundleLogLevel = Infrastructure.LogLevel.Debug;
+                    bundleLogLevel = Infrastructure.Server.LogLevel.Debug;
                     break;
                 case LogLevel.Warn:
-                    bundleLogLevel = Infrastructure.LogLevel.Warn;
+                    bundleLogLevel = Infrastructure.Server.LogLevel.Warn;
                     break;
                 case LogLevel.Error:
-                    bundleLogLevel = Infrastructure.LogLevel.Error;
+                    bundleLogLevel = Infrastructure.Server.LogLevel.Error;
                     break;
                 default:
-                    bundleLogLevel = Infrastructure.LogLevel.Info;
+                    bundleLogLevel = Infrastructure.Server.LogLevel.Info;
                     break;
             }
 

@@ -3,20 +3,18 @@ using System.Collections.Generic;
 using System.Linq;
 using Bundler.Comparers;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
+using Bundler.Infrastructure.Transform;
 using Bundler.Sources;
 
 namespace Bundler {
     public sealed class BundleBuilder {
         private readonly IBundleContext _bundleContext;
-        private readonly string _contentType;
-        private readonly string _placeHolder;
-        private readonly string _tagFormat;
+        private readonly IBundleRenderer _bundleRenderer;
 
-        public BundleBuilder(IBundleContext bundleContext, string contentType, string placeHolder, string tagFormat) {
+        public BundleBuilder(IBundleContext bundleContext, IBundleRenderer bundleRenderer) {
             _bundleContext = bundleContext;
-            _contentType = contentType;
-            _placeHolder = placeHolder;
-            _tagFormat = tagFormat;
+            _bundleRenderer = bundleRenderer;
         }
 
         public ICollection<ISource> Sources { get; } = new HashSet<ISource>(SourceEqualityComparer.Default);
@@ -33,7 +31,7 @@ namespace Bundler {
         }
 
         public IBundle Create() {
-            var bundle = new Bundle(_bundleContext, _contentType, _placeHolder, _tagFormat, ContentTransformers.ToArray());
+            var bundle = new Bundle(_bundleContext, _bundleRenderer, ContentTransformers.ToArray());
             if (!bundle.Add(Sources.ToArray())) {
                 throw new Exception($"Failed to construct bundle with this sources ${string.Join("; ", Sources.Select(x => x.Identifier))}");
             }

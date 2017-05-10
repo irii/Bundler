@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Web.Hosting;
 using Bundler.Infrastructure;
+using Bundler.Infrastructure.Server;
 
 namespace Bundler.AspNet {
     public class AspNetBundleVirtualPathProvider : IBundleVirtualPathProvider {

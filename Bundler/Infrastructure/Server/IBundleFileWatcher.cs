@@ -1,6 +1,6 @@
 using System;
 
-namespace Bundler.Infrastructure {
+namespace Bundler.Infrastructure.Server {
     public interface IBundleFileWatcher : IDisposable {
         /// <summary>
         /// Adds a file/folder to the file system watcher.

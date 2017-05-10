@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Bundler.Infrastructure {
+namespace Bundler.Infrastructure.Server {
     public interface IBundleUrlHelper {
         string ToAbsolute(string virtualUrl);
 

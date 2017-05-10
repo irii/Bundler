@@ -46,11 +46,16 @@
     <Compile Include="BundleBuilder.cs" />
     <Compile Include="BundlingConfiguration.cs" />
     <Compile Include="Defaults\DefaultBundleConfigurationBuilder.cs" />
+    <Compile Include="Helper\BundleHelper.cs" />
     <Compile Include="Helper\EnumerableHelper.cs" />
     <Compile Include="Comparers\SourceEqualityComparer.cs" />
     <Compile Include="Comparers\SourceItemEqualityComparer.cs" />
+    <Compile Include="Infrastructure\Configuration\IBundleConfigurationBuilder.cs" />
     <Compile Include="Infrastructure\IBundleContentResponse.cs" />
     <Compile Include="Infrastructure\IBundleFileResponse.cs" />
+    <Compile Include="Infrastructure\IBundleRenderer.cs" />
+    <Compile Include="Infrastructure\Configuration\Setting.cs" />
+    <Compile Include="Infrastructure\ISourceItem.cs" />
     <Compile Include="Sources\DirectorySource.cs" />
     <Compile Include="Sources\StringSource.cs" />
     <Compile Include="Sources\StreamSource.cs" />
@@ -62,19 +67,19 @@
     <Compile Include="Helper\BundleFileHelper.cs" />
     <Compile Include="Bundle.cs" />
     <Compile Include="Helper\ConfigurationValidator.cs" />
-    <Compile Include="Infrastructure\BundleTransformItem.cs" />
+    <Compile Include="Infrastructure\Transform\BundleTransformItem.cs" />
     <Compile Include="Infrastructure\SourceChangedDelegate.cs" />
     <Compile Include="Infrastructure\IBundle.cs" />
-    <Compile Include="Infrastructure\IBundleConfiguration.cs" />
-    <Compile Include="Infrastructure\IBundleFileWatcher.cs" />
-    <Compile Include="Infrastructure\IBundleDiagnostic.cs" />
+    <Compile Include="Infrastructure\Configuration\IBundleConfiguration.cs" />
+    <Compile Include="Infrastructure\Server\IBundleFileWatcher.cs" />
+    <Compile Include="Infrastructure\Server\IBundleDiagnostic.cs" />
     <Compile Include="Infrastructure\IBundleProvider.cs" />
-    <Compile Include="Infrastructure\IBundleContext.cs" />
+    <Compile Include="Infrastructure\Server\IBundleContext.cs" />
     <Compile Include="Infrastructure\IBundleResponse.cs" />
-    <Compile Include="Infrastructure\IBundleUrlHelper.cs" />
-    <Compile Include="Infrastructure\IBundleVirtualPathProvider.cs" />
+    <Compile Include="Infrastructure\Server\IBundleUrlHelper.cs" />
+    <Compile Include="Infrastructure\Server\IBundleVirtualPathProvider.cs" />
     <Compile Include="Infrastructure\ISource.cs" />
-    <Compile Include="Infrastructure\IBundleContentTransformer.cs" />
+    <Compile Include="Infrastructure\Transform\IBundleContentTransformer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup />
