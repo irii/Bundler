@@ -1,5 +1,5 @@
 ﻿using System;
-using Bundler.Infrastructure;
+using System.IO.Compression;
 using Bundler.Infrastructure.Configuration;
 
 namespace Bundler.AspNet {
@@ -28,5 +28,32 @@ namespace Bundler.AspNet {
         public bool UseEtag { get; set; } = CachingConfiguration.UseEtag.Default;
 
         public TimeSpan Duration { get; set; } = CachingConfiguration.Duration.Default;
+    }
+
+
+    public static class CompressionConfiguration {
+        public const string Section = "Asp_Bundle_Compression";
+     
+        public static Setting<CompressionAlgorithm> CompressionAlgorithm { get; } = new Setting<CompressionAlgorithm>(Section, "CompressionAlgorithm", AspNet.CompressionAlgorithm.None);
+        public static Setting<CompressionLevel> CompressionLevel { get; } = new Setting<CompressionLevel>(Section, "CompressionLevel", System.IO.Compression.CompressionLevel.Optimal);
+
+        public static IBundleConfigurationBuilder SetupCompression(this IBundleConfigurationBuilder bundleConfigurationBuilder, CompressSettings settings) {
+            bundleConfigurationBuilder.Set(CompressionAlgorithm, settings.CompressionAlgorithm);
+            bundleConfigurationBuilder.Set(CompressionLevel, settings.CompressionLevel);
+            return bundleConfigurationBuilder;
+        }
+    }
+
+    [Flags]
+    public enum CompressionAlgorithm {
+        None = 0,
+        Gzip = 1,
+        Deflate = 2,
+        All = ~None
+    }
+
+    public sealed class CompressSettings {
+        public CompressionAlgorithm CompressionAlgorithm { get; set; } = CompressionConfiguration.CompressionAlgorithm.Default;
+        public CompressionLevel CompressionLevel { get; set; } = CompressionConfiguration.CompressionLevel.Default;
     }
 }

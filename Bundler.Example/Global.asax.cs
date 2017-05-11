@@ -26,6 +26,9 @@ namespace Bundler.Example {
                     Enabled = true,
                     UseEtag = true
                 })
+                .SetupCompression(new CompressSettings {
+                    CompressionAlgorithm = CompressionAlgorithm.All
+                })
                 .SetupLess(new LessSettings {
                     Compress = true,
                     Debug = true
