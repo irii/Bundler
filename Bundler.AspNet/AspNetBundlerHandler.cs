@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO.Compression;
+using System.Linq;
 using System.Web;
 using Bundler.Infrastructure;
 using Bundler.Infrastructure.Server;
@@ -106,9 +107,15 @@ namespace Bundler.AspNet {
             if (allowedEncodings == CompressionAlgorithm.None) {
                 return;
             }
-            
+
+            var supportedEncodingsRaw = context.Request.Headers["Accept-Encoding"]?.ToLower() ?? string.Empty;
+            var supportedEncodings = supportedEncodingsRaw
+                .Split(new[] {','}, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim())
+                .ToList();
+
             // TODO: Add weight
-            var supportedEncodings = context.Response.Headers["Accept-Encoding"]?.ToLower() ?? string.Empty;
+
             if (allowedEncodings.HasFlag(CompressionAlgorithm.Gzip) && supportedEncodings.Contains("gzip")) {
                 context.Response.Filter = new GZipStream(context.Response.Filter, _bundleContext.Configuration.Get(CompressionConfiguration.CompressionLevel));
                 context.Response.AppendHeader("Content-Encoding", "gzip");
