@@ -1,14 +1,23 @@
-﻿using System.Web.Mvc;
+﻿using System.IO.Compression;
+using System.Web;
+using System.Web.Mvc;
 using System.Web.Routing;
 using Bundler.AspNet;
 using Bundler.Defaults;
+using Bundler.Example;
 using Bundler.Infrastructure;
 using Bundler.JavaScript;
 using Bundler.Less;
 
+[assembly: PreApplicationStartMethod(typeof(MvcApplication), nameof(MvcApplication.InitBundlerModule))]
+
 namespace Bundler.Example {
     public class MvcApplication : System.Web.HttpApplication {
         public IBundleProvider BundleProvider => AspNetBundler.Current;
+
+        public static void InitBundlerModule() {
+            Microsoft.Web.Infrastructure.DynamicModuleHelper.DynamicModuleUtility.RegisterModule(AspNetBundler.HttpModule);
+        }
 
         protected void Application_Start() {
             AreaRegistration.RegisterAllAreas();

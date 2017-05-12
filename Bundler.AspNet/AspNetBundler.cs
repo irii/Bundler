@@ -4,6 +4,16 @@ using Bundler.Infrastructure;
 
 namespace Bundler.AspNet {
     public static class AspNetBundler {
+        /// <summary>
+        /// Bundler IIS IHttpModule
+        /// </summary>
+        public static Type HttpModule { get; } = typeof(AspNetBundlerModule);
+
+        /// <summary>
+        /// Bundler IIS IHttpHandler
+        /// </summary>
+        public static Type HttpHandler { get; } = typeof(AspNetBundlerHandler);
+
         private static readonly object WriteLock = new object();
         private static IBundleProvider _currentBundleProvider;
 
